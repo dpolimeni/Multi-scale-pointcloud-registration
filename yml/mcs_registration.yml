@@ -1,0 +1,62 @@
+################FILEPATH FOR EXPANDED source AND target CLOUD (.npz)
+#source_path: "/Users/dp/Sviluppo/Registration_A_D/bunny/data/bun000.ply" #Loading
+#target_path: "/Users/dp/Sviluppo/Registration_A_D/bunny/data/bun090.ply" #Loading
+
+source_path: "C:/Users/dpolimeni/Desktop/paper_project/Armadillo_scans/Armadillo_scans/ArmadilloBack_330.ply" #Loading
+target_path: "C:/Users/dpolimeni/Desktop/paper_project/Armadillo_scans/Armadillo_scans/ArmadilloBack_330.ply" #Loading
+
+#source_path: "C:/Users/apann/Desktop/pcd-registration/data/Armadillo_scans/ArmadilloBack_300.ply"
+#target_path: "C:/Users/apann/Desktop/pcd-registration/data/Armadillo_scans/ArmadilloBack_300.ply"
+
+source_path_out: "C:/Users/dpolimeni/Desktop/paper_project/Registration_A_D/results/Aligned_source.npz"   #Saving
+target_path_out: "C:/Users/dpolimeni/Desktop/paper_project/Registration_A_D/results/Aligned_target.npz" #Saving
+
+
+################INPUT FORMAT
+
+is_npz: False
+
+################PERTURB CLOUD
+
+deg: 1.57
+mu: 0
+std: 0.1
+n_points: 0.1 ## percentage of points to add to the cloud
+
+################DENOISE POINT CLOUDS
+
+clean_cloud: True  #Set True to remove noise with SOR (Statistical Outlier Removal)
+std_ratio: 2 #SOR parameter. By increasing it, more points are kept (as inliers)
+nb_neighbors: 64 #number of neighbors used by SOR algorithm
+
+################NUMBER OF POINTS AFTER INTERMEDIATE SUBSAMPLING
+
+n_points_source_ds: 10000
+n_points_target_ds: 10000
+
+##################PARAMETERS FOR NORMAL AND FPFH ESTIMATION OF SOURCE/TARGET POINT CLOUD
+
+radius_normal: 0.05 ## radius to compute normal estimation of each point
+radius_feature: 0.1 ## radius to compute FPFH of each point
+
+################FINAL DIMENSIONS OF CLOUDS (correct voxel size found by weak compass search)
+target_points_source: 2000
+target_points_target: 2000
+starting_voxel_size: 0.01 ## Compass search parameters to define voxel size
+delta: 0.01
+stopping_delta: 0.0005
+
+################ALGORITHM DETAILS
+
+reg_type: "fgr" #Algorythm used in multistart procedure. 'fgr' for fast global registration, 'gicp' for generalized icp
+icp_type: "PointToPlane" #Used for refinement. 'PointToPoint' or 'PointToPlane'
+n_attempts: 30 #number of iteration for multistart inside compass search
+compass_delta: 0.2 ## delta of compass search apllied to registration
+compass_eps: 0.025 ## stopping criteria for registraion compass search 
+compass_max_iter: 80 ## Maximum number of compass search iterations for registration
+refinement_iterations: 200 ## maximum number of iteration of the final registration refinement
+refinement_distnace_threshold: 0.5 ## Define maximum distance of points taken into registration
+
+################VISUALIZATION OPTIONS
+
+visualize_initial_alignment: True

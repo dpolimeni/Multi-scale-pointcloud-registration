@@ -1,0 +1,5 @@
+data/
+__MACOSX/
+.ipynb_checkpoints/
+.idea/
+.yml/
