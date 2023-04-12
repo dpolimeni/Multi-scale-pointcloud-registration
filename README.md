@@ -1,5 +1,8 @@
 # Initial premises
 This project is currently in development and further specifications will be included on this README.
+Equally involved contributors:
+- diego.polimeni99@gmail.com
+- a.pannone1798@gmail.com
 
 # Multi-scale-registration 
 Pointc loud Registration Algorithm with noise and different scale management.
