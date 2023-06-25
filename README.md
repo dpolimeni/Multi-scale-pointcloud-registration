@@ -25,6 +25,7 @@ Please note that this project is currently in development, and further specifica
 
 - Diego Polimeni: diego.polimeni99@gmail.com
 - Alessandro Pannone: a.pannone1798@gmail.com
+
 Feel free to reach out to the contributors if you have any questions or suggestions.
 
 Thank you for your interest in our project!
