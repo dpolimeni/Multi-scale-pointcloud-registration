@@ -36,7 +36,6 @@ secrets.txt
 # Ignore specific directories
 logs/
 cache/
-data/
 .ipynb_checkpoints/
 .yml/
 
