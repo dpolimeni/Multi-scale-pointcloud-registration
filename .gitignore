@@ -49,3 +49,8 @@ assets/!important_file.txt
 # Ignore files based on patterns
 **/*.swp  # Ignore Vim swap files
 **/*.bak  # Ignore backup files
+
+# Ignore environment variables file
+venv/
+.env
+```
