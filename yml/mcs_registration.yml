@@ -2,14 +2,14 @@
 #source_path: "/Users/dp/Sviluppo/Registration_A_D/bunny/data/bun000.ply" #Loading
 #target_path: "/Users/dp/Sviluppo/Registration_A_D/bunny/data/bun090.ply" #Loading
 
-source_path: "C:/Users/dpolimeni/Desktop/paper_project/Armadillo_scans/Armadillo_scans/ArmadilloBack_330.ply" #Loading
-target_path: "C:/Users/dpolimeni/Desktop/paper_project/Armadillo_scans/Armadillo_scans/ArmadilloBack_330.ply" #Loading
+source_path: "/Users/dpolimeni/Desktop/projects/pointcloud_registration/Armadillo_scans/ArmadilloBack_330.ply" #Loading
+target_path: "/Users/dpolimeni/Desktop/projects/pointcloud_registration/Armadillo_scans/ArmadilloBack_330.ply" #Loading
 
 #source_path: "C:/Users/apann/Desktop/pcd-registration/data/Armadillo_scans/ArmadilloBack_300.ply"
 #target_path: "C:/Users/apann/Desktop/pcd-registration/data/Armadillo_scans/ArmadilloBack_300.ply"
 
-source_path_out: "C:/Users/dpolimeni/Desktop/paper_project/Registration_A_D/results/Aligned_source.npz"   #Saving
-target_path_out: "C:/Users/dpolimeni/Desktop/paper_project/Registration_A_D/results/Aligned_target.npz" #Saving
+source_path_out: "/Users/dpolimeni/Desktop/projects/pointcloud_registration/Armadillo_scans/Aligned_source.npz"   #Saving
+target_path_out: "/Users/dpolimeni/Desktop/projects/pointcloud_registration/Armadillo_scans/Aligned_target.npz" #Saving
 
 
 ################INPUT FORMAT
