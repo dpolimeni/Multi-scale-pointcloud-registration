@@ -23,7 +23,7 @@ def draw_registration_result(source, target, transformation):
     target_temp.paint_uniform_color([1., 0., 0.])
     
     source_temp.transform(transformation)
-    
+
     o3d.visualization.draw_geometries([source_temp, target_temp])
 
 'UNIFORM SUBSAMPLING OF POINTCLOUD, WITHOUT REINSERTION'
