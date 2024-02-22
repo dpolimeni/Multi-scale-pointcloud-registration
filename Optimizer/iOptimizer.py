@@ -16,4 +16,5 @@ class IOptimizer(ABC):
         Returns:
             Tuple[np.ndarray, float]: A tuple with the Roto-translation matrix and inlier RMSE of the solution
         """
+        # TODO evaluate potential other parameters needed
         pass
