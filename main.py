@@ -1,8 +1,8 @@
 from Aligner.Aligner import Aligner
-from Preprocessor.Preprocessor import Preprocessor
-from Preprocessor.RandomDownsampler import RandomDownsampler
-from Preprocessor.VoxelDownsampler import VoxelDownsampler
-from Optimizer.FastGlobalOptimizer import FastGlobalOptimizer
+from Preprocessor.preprocessor import Preprocessor
+from Preprocessor.randomDownsampler import RandomDownsampler
+from Preprocessor.voxelDownsampler import VoxelDownsampler
+from Optimizer.fastGlobalOptimizer import FastGlobalOptimizer
 import numpy as np
 import open3d as o3d
 import copy

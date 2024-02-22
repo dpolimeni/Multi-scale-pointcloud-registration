@@ -1,6 +1,6 @@
 import copy
 
-from Preprocessor.Preprocessor import Preprocessor
+from Preprocessor.preprocessor import Preprocessor
 from Optimizer.iOptimizer import IOptimizer
 import numpy as np
 class Aligner:
