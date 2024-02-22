@@ -19,14 +19,9 @@ class FastGlobalOptimizer(IOptimizer):
         self.fpfh_knn = fpfh_knn # TODO differentiate among normal estimate and fpfh extraction
         self.fpfh_radius_features = fpfh_radius_features
 
-    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
-
-        # TODO create an util function to make fpfh
-        source_point_cloud = o3d.geometry.PointCloud()
-        target_point_cloud = o3d.geometry.PointCloud()
-        source_point_cloud.points = o3d.utility.Vector3dVector(source)
-        target_point_cloud.points = o3d.utility.Vector3dVector(target)
-
+    def get_fpfh_features(
+            self, source_point_cloud: o3d.geometry.PointCloud, target_point_cloud: o3d.geometry.PointCloud
+        ) -> Tuple[o3d.pipelines.registration.Feature, o3d.pipelines.registration.Feature]:
         source_copy = copy.deepcopy(source_point_cloud)
         target_copy = copy.deepcopy(target_point_cloud)
 
@@ -49,6 +44,15 @@ class FastGlobalOptimizer(IOptimizer):
             o3d.geometry.KDTreeSearchParamHybrid(radius=self.fpfh_radius_features, max_nn=self.fpfh_knn)
         )
 
+        return source_fpfh_features, target_fpfh_features
+
+    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
+        source_point_cloud = o3d.geometry.PointCloud()
+        target_point_cloud = o3d.geometry.PointCloud()
+        source_point_cloud.points = o3d.utility.Vector3dVector(source)
+        target_point_cloud.points = o3d.utility.Vector3dVector(target)
+
+        source_fpfh_features, target_fpfh_features = self.get_fpfh_features(source_point_cloud, target_point_cloud)
 
         fast_global_option = o3d.pipelines.registration.FastGlobalRegistrationOption(
             division_factor=self.division_factor, tuple_scale=self.tuple_scale,
@@ -61,3 +65,4 @@ class FastGlobalOptimizer(IOptimizer):
         )
 
         return optimization_result.transformation, optimization_result.inlier_rmse
+

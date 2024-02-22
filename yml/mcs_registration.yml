@@ -52,7 +52,7 @@ reg_type: "fgr" #Algorythm used in multistart procedure. 'fgr' for fast global r
 icp_type: "PointToPlane" #Used for refinement. 'PointToPoint' or 'PointToPlane'
 n_attempts: 30 #number of iteration for multistart inside compass search
 compass_delta: 0.2 ## delta of compass search apllied to registration
-compass_eps: 0.025 ## stopping criteria for registraion compass search 
+compass_eps: 0.05 ## stopping criteria for registraion compass search
 compass_max_iter: 80 ## Maximum number of compass search iterations for registration
 refinement_iterations: 200 ## maximum number of iteration of the final registration refinement
 refinement_distnace_threshold: 0.5 ## Define maximum distance of points taken into registration
