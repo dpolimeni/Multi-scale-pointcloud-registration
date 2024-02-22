@@ -18,7 +18,7 @@ class GeneralizedICP(IOptimizer):
         source_point_cloud.points = o3d.utility.Vector3dVector(source)
         target_point_cloud.points = o3d.utility.Vector3dVector(target)
 
-        optimization_result : open3d.pipelines.registration.RegistrationResult = o3d.pipelines.registration.registration_generalized_icp(
+        optimization_result : o3d.pipelines.registration.RegistrationResult = o3d.pipelines.registration.registration_generalized_icp(
             source_point_cloud, target_point_cloud, self.max_correspondence_distance, np.eye(4),
             icp_type, o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=self.max_iterations)
         )
