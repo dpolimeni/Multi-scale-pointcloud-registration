@@ -3,7 +3,7 @@ from Preprocessor.iProcessBlock import IProcessBlock
 import numpy as np
 
 
-class RandomDownsampling(IProcessBlock):
+class RandomDownsampler(IProcessBlock):
     def __init__(self, sample_size: int, replace: bool = False):
         self.sample_size = sample_size
         self.replace = replace
