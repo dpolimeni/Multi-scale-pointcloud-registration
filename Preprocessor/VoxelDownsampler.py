@@ -19,6 +19,7 @@ class VoxelDownsampler(IProcessBlock):
         n_points = np.asarray(cloud_ds.points).shape[0]
         metric = np.abs(self.target_points - n_points)
         return cloud_ds, new_voxel_size, metric
+
     def process(self, cloud: np.ndarray):
         """Get the voxel size of the cloud needed for target sample size"""
         current_voxel_size = self.base_voxel_size
