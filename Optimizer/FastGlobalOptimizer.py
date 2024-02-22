@@ -56,7 +56,7 @@ class FastGlobalOptimizer(IOptimizer):
             iteration_number=self.iteration_number, decrease_mu=self.decrease_mu
         )
 
-        optimization_result = o3d.pipelines.registration.registration_fgr_based_on_feature_matching(
+        optimization_result: o3d.pipelines.registration.RegistrationResult = o3d.pipelines.registration.registration_fgr_based_on_feature_matching(
             source_point_cloud, target_point_cloud, source_fpfh_features, target_fpfh_features, fast_global_option
         )
 
