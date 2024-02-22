@@ -46,7 +46,7 @@ class FastGlobalOptimizer(IOptimizer):
 
         return source_fpfh_features, target_fpfh_features
 
-    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
+    def optimize(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float]:
         source_point_cloud = o3d.geometry.PointCloud()
         target_point_cloud = o3d.geometry.PointCloud()
         source_point_cloud.points = o3d.utility.Vector3dVector(source)
