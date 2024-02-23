@@ -7,7 +7,7 @@ import numpy as np
 
 class Aligner:
     def __init__(self, source_preprocessor: Preprocessor, target_preprocessor: Preprocessor,
-                 optimizer: IOptimizer, n_attempts: int = 100, deg=0.2, mu=0, std=0.1):
+                 optimizer: IOptimizer, n_attempts: int = 100, deg=0.2, mu=0, std=0.1, delta=0.1, max_iter=100, eps=1e-6):
         """
         :param source_preprocessor: Source cloud preprocessor
         :param target_preprocessor: Target cloud preprocessor
@@ -20,6 +20,9 @@ class Aligner:
         self.source_preprocessor = source_preprocessor
         self.target_preprocessor = target_preprocessor
         self.optimizer = optimizer
+        self.delta = delta
+        self.max_iter = max_iter
+        self.eps = eps
         self.mu = mu
         self.std = std
         self.deg = deg
@@ -46,25 +49,27 @@ class Aligner:
 
         return rotation_matrix, translation
 
-    def multistart_registration(self, source: np.ndarray, target: np.ndarray):
-        """Perform multistart registration on the source and target point clouds."""
+    def multistart_registration(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float]:
+        """Perform multistart registration on the source and target point clouds.
+        :param source: Source point cloud
+        :param target: Target point cloud
 
-        source_processed = self.source_preprocessor.preprocess(source)
-        target_processed = self.target_preprocessor.preprocess(target)
+        :return: (best_transformation, metric): (best transformation matrix, best metric)
+        """
 
         # Initial metric and transformation
         metric = np.inf
         best_transformation = np.eye(4)
 
         for n in range(self.n_attempts):  # tqdm
-            source_copy = copy.deepcopy(source_processed)
+            source_copy = copy.deepcopy(source)
 
             # Generate random rotation and translation matrices
             initial_rotation, initial_translation = self.initialize_rotation()
             source_initialized = np.dot(source_copy, initial_rotation) + initial_translation
 
             # Perform registration
-            current_rotation, current_metric = self.optimizer.optimize(source_initialized, target_processed)
+            current_rotation, current_metric = self.optimizer.optimize(source_initialized, target)
 
             if current_metric < metric:
                 # Update metric
@@ -75,34 +80,27 @@ class Aligner:
                 T[:3, 3] = np.dot(current_rotation[:3, :3], initial_translation).ravel() + initial_translation
                 best_transformation = T
 
-        return best_transformation, best_transformation
+        return best_transformation, metric
 
     def align(self, source: np.ndarray, target: np.ndarray):
         source = self.source_preprocessor.preprocess(source)
         target = self.target_preprocessor.preprocess(target)
-        pass
+        iteration = 0
 
-    def compass_search(source, target, source_fpfh, target_fpfh, n_attempts, delta, eps, max_iter, reg_type='fgr'):
-        # INITIALIZE COUNTER
-        it = 0
-        # INITIAL SCALE FACTOR
-        coeff_star = np.ones((1, 3))
-        # DEEPCOPY TARGET CLOUD TO CHANGE IT DURING THE ALGORITHM
-        pcd_target = copy.deepcopy(target)
-        target_array = np.array(pcd_target.points)
-        # DO THE FIRST MULTISTART TO GET THE FIRST METRIC
-        T_star, rmse_star = execute_multistart_registration(source, pcd_target, source_fpfh, target_fpfh,
-                                                            n_attempts=n_attempts, distance_threshold=0.8,
-                                                            tuple_scale=0.9, reg_type=reg_type)
+        optimal_scale_factors = np.ones((1, 3))
+        optimal_transformation = np.eye(4)
+
+        optimal_transformation, optimal_metric = self.multistart_registration(source, target)
+
         # INITIALIZE ERRORS LIST
-        errors = [rmse_star]
-        print('rmse star', rmse_star)
+        errors = [optimal_metric]
+        print('rmse star', optimal_metric)
         directions = np.eye(3)
 
-        while delta >= eps and it <= max_iter:
+        while self.delta >= self.eps and iteration <= self.max_iter:
             # UPDATE COUNTER
-            it += 1
-            print('Iteration number:', it, 'Current step:', delta)
+            iteration += 1
+            print('Iteration number:', iteration, 'Current step:', self.delta)
             for j in range(3):
                 coeff_plus = coeff_star + delta * directions[:, 2 - j]
 
