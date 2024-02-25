@@ -3,6 +3,7 @@ from typing import Tuple
 from Preprocessor.preprocessor import Preprocessor
 from Optimizer.iOptimizer import IOptimizer
 import numpy as np
+from typing import List
 
 
 class Aligner:
@@ -97,7 +98,7 @@ class Aligner:
 
         return new_scale_factors, current_rotation, current_metric
 
-    def align(self, source: np.ndarray, target: np.ndarray):
+    def align(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float, List[float]]:
         source = self.source_preprocessor.preprocess(source)
         target = self.target_preprocessor.preprocess(target)
         iteration = 0
