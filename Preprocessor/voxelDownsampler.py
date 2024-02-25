@@ -6,8 +6,10 @@ import open3d as o3d
 
 
 class VoxelDownsampler(IProcessBlock):
-    def __init__(self, target_points: int, base_voxel_size: float = 0.1, delta: float = 0.05, eps: float = 0.001):
+    def __init__(self, target_points: int, base_voxel_size: float = 0.1,
+                 min_voxel_size: float = 0.005, delta: float = 0.05, eps: float = 0.001):
         self.target_points = target_points
+        self.min_voxel_size = min_voxel_size
         # TODO evaluate if is better create another type of class to estimate the voxel size
         self.base_voxel_size = base_voxel_size
         self.delta = delta
@@ -15,7 +17,9 @@ class VoxelDownsampler(IProcessBlock):
 
     def compass_step(self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float):
         new_voxel_size = current_voxel_size + delta
-        cloud_ds = cloud.voxel_down_sample(delta)
+        if new_voxel_size <= self.min_voxel_size:
+            new_voxel_size = self.min_voxel_size
+        cloud_ds = cloud.voxel_down_sample(new_voxel_size)
         n_points = np.asarray(cloud_ds.points).shape[0]
         metric = np.abs(self.target_points - n_points)
         return cloud_ds, new_voxel_size, metric
@@ -54,6 +58,6 @@ class VoxelDownsampler(IProcessBlock):
 
             self.delta = self.delta / 2
 
-        return obtained_cloud
+        return np.asarray(obtained_cloud.points)
 
 
