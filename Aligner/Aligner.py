@@ -82,13 +82,27 @@ class Aligner:
 
         return best_transformation, metric
 
+    def compass_step(self, source: np.ndarray, target: np.ndarray, scale_factors: np.ndarray, delta: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
+        """Perform a single compass step to find the optimal scaling factor for the target cloud.
+        :param source: Source point cloud
+        :param target: Target point cloud
+        :param scale_factors: Current scaling factor
+        :param delta: Step size for the scaling factor
+
+        :return: (new_scale_factors, new_rotation, metric): (new scaling factor, obtsined new_rotation ans new metric)
+        """
+        new_scale_factors = scale_factors + delta
+        target_scaled = target * new_scale_factors
+        current_rotation, current_metric = self.multistart_registration(source, target_scaled)
+
+        return new_scale_factors, current_rotation, current_metric
+
     def align(self, source: np.ndarray, target: np.ndarray):
         source = self.source_preprocessor.preprocess(source)
         target = self.target_preprocessor.preprocess(target)
         iteration = 0
 
         optimal_scale_factors = np.ones((1, 3))
-        optimal_transformation = np.eye(4)
 
         optimal_transformation, optimal_metric = self.multistart_registration(source, target)
 
@@ -98,56 +112,48 @@ class Aligner:
         directions = np.eye(3)
 
         while self.delta >= self.eps and iteration <= self.max_iter:
-            # UPDATE COUNTER
+            # UPDATE ITERATION COUNTER
             iteration += 1
             print('Iteration number:', iteration, 'Current step:', self.delta)
-            for j in range(3):
-                coeff_plus = coeff_star + delta * directions[:, 2 - j]
+            for axis in range(3):
+                scale_plus = self.delta * directions[:, axis]
+                new_scale_factors, new_rotation, new_metric = self.compass_step(
+                    source, target,
+                    optimal_scale_factors,
+                    scale_plus
+                )
 
-                # SCALE TARGET CLOUD
-                pcd_target.points = o3d.utility.Vector3dVector(target_array * coeff_plus)
-                # RETRIEVE FPFH
-                target_fpfh = o3d.pipelines.registration.compute_fpfh_feature(pcd_target,
-                                                                              o3d.geometry.KDTreeSearchParamHybrid(
-                                                                                  radius=0.1, max_nn=100))
-                # RUN MULTISTART
-                T_plus, rmse_plus = execute_multistart_registration(source, pcd_target, source_fpfh, target_fpfh,
-                                                                    n_attempts=n_attempts, distance_threshold=0.8,
-                                                                    tuple_scale=0.9, reg_type=reg_type)
-                if rmse_plus <= rmse_star:
-                    print('New RMSE:', rmse_plus, 'Old RMSE:', rmse_star)
-                    rmse_star = rmse_plus
-                    T_star = T_plus
-                    coeff_star = coeff_plus
-                    # print('TOP COEFF', coeff_star)
-                    errors.append(rmse_star)
+                if new_metric <= optimal_metric:
+                    print('New RMSE:', new_metric, 'Old RMSE:', optimal_metric)
+                    optimal_metric = new_metric
+                    optimal_transformation = new_rotation
+                    optimal_scale_factors = scale_plus
+                    errors.append(new_metric)
                     break
 
                 # SCALE TARGET CLOUD
-                coeff_neg = coeff_star - delta * directions[:, 2 - j]
-                pcd_target.points = o3d.utility.Vector3dVector(target_array * coeff_neg)
-                # RETRIEVE FPFH
-                target_fpfh = o3d.pipelines.registration.compute_fpfh_feature(pcd_target,
-                                                                              o3d.geometry.KDTreeSearchParamHybrid(
-                                                                                  radius=0.1, max_nn=100))
-                # RUN MULTISTART
-                T_neg, rmse_neg = execute_multistart_registration(source, pcd_target, source_fpfh, target_fpfh,
-                                                                  n_attempts=n_attempts, distance_threshold=0.8,
-                                                                  tuple_scale=0.9, reg_type=reg_type)
+                scale_neg = -self.delta * directions[:, axis]
+                new_scale_factors, new_rotation, new_metric = self.compass_step(
+                    source, target,
+                    optimal_scale_factors,
+                    scale_neg
+                )
 
-                if rmse_neg <= rmse_star:
-                    print('New RMSE', rmse_neg, 'Old RMSE', rmse_star)
-                    rmse_star = rmse_neg
-                    T_star = T_neg
-                    coeff_star = coeff_neg
-                    # print('TOP COEFF', coeff_star)
-                    errors.append(rmse_star)
+                if new_metric <= optimal_metric:
+                    print('New RMSE:', new_metric, 'Old RMSE:', optimal_metric)
+                    optimal_metric = new_metric
+                    optimal_transformation = new_rotation
+                    optimal_scale_factors = scale_neg
+                    errors.append(new_metric)
                     break
+            # TODO (ADD try/except?)
+            # UPDATE DELTA
+            if new_metric > optimal_metric:
+                self.delta = self.delta / 2
+                print('Delta updated:', self.delta)
 
-            if rmse_plus > rmse_star and rmse_neg > rmse_star:
-                delta = delta / 2
+        return optimal_transformation, optimal_metric, errors
 
-        return T_star, coeff_star, rmse_star, errors
 
 
 
