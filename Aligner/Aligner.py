@@ -5,6 +5,7 @@ from Optimizer.iOptimizer import IOptimizer
 import numpy as np
 from typing import List
 import multiprocessing
+import time
 
 
 class Aligner:
@@ -85,6 +86,7 @@ class Aligner:
         return best_transformation, metric
 
     def _worker(self, n: multiprocessing.Queue, source, target, result_queue):
+        # print('Starting process', n)
         source_copy = copy.deepcopy(source)
 
         # Generate random rotation and translation matrices
@@ -98,6 +100,7 @@ class Aligner:
         result = (current_rotation, initial_rotation, initial_translation, current_metric)
 
         result_queue.put((n, result))
+        # print('Process', n, 'finished')
 
     def parallel_multistart_registration(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float]:
         """Perform multistart registration on the source and target point clouds.
@@ -113,29 +116,31 @@ class Aligner:
 
         processes = []
         result_queue = multiprocessing.Queue()
-
+        num_cores = multiprocessing.cpu_count()
+        # print('Number of cores:', num_cores)
+        # print('Number of attempts:', self.n_attempts)
         for n in range(self.n_attempts):
-            print('Starting process', n)
             process = multiprocessing.Process(
                 target=self._worker,
                 args=(n, source, target, result_queue)
             )
             processes.append(process)
             process.start()
-            num_cores = multiprocessing.cpu_count()
-            print('Number of cores:', num_cores)
             # TODO improve checks on processes
             if len(processes) == num_cores:
+                # print('Joining processes')
                 for process in processes:
+                    #print('Joining process', process.pid)
                     process.join()
+                # print('Processes joined')
                 processes = []
-            for process in processes:
-                process.join()
+        for process in processes:
+            process.join()
 
         # Collect results
         while not result_queue.empty():
             _, (current_rotation, initial_rotation, initial_translation, current_metric) = result_queue.get()
-            print(f'Process {_} finished with RMSE:', current_metric)
+            # print(f'Process {_} finished with RMSE:', current_metric)
 
             if current_metric < metric:
                 metric = current_metric
@@ -169,8 +174,10 @@ class Aligner:
 
         optimal_scale_factors = np.ones((1, 3))
 
-        # optimal_transformation, optimal_metric = self.multistart_registration(source, target)
-        optimal_transformation, optimal_metric = self.parallel_multistart_registration(source, target)
+        start = time.time()
+        optimal_transformation, optimal_metric = self.multistart_registration(source, target)
+        # optimal_transformation, optimal_metric = self.parallel_multistart_registration(source, target)
+        print('Multistart registration time:', time.time() - start)
 
         # INITIALIZE ERRORS LIST
         errors = [optimal_metric]
