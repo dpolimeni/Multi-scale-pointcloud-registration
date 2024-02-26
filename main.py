@@ -8,6 +8,7 @@ from Optimizer.generalizedICP import GeneralizedICP
 import numpy as np
 import open3d as o3d
 import copy
+import time
 import os
 import yaml
 
@@ -107,12 +108,16 @@ def main():
         deg=deg,
         mu=mu,
         std=std,
+        delta=compass_delta,
+        eps=compass_eps,
     )
+    start = time.time()
     optimal_transformation, optimal_metric, errors = aligner.align(source_array, target_array)
     print('done')
     print(
         f'Optimal transformation: \n{optimal_transformation}\nOptimal metric: {optimal_metric}\nErrors: {errors}'
     )
+    print(f'Elapsed time: {time.time() - start}')
 
 if __name__ == "__main__":
     main()

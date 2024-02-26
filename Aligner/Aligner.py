@@ -4,6 +4,7 @@ from Preprocessor.preprocessor import Preprocessor
 from Optimizer.iOptimizer import IOptimizer
 import numpy as np
 from typing import List
+import multiprocessing
 
 
 class Aligner:
@@ -83,6 +84,68 @@ class Aligner:
 
         return best_transformation, metric
 
+    def _worker(self, n: multiprocessing.Queue, source, target, result_queue):
+        source_copy = copy.deepcopy(source)
+
+        # Generate random rotation and translation matrices
+        initial_rotation, initial_translation = self.initialize_rotation()
+        source_initialized = np.dot(source_copy, initial_rotation) + initial_translation
+
+        # Perform registration
+        current_rotation, current_metric = self.optimizer.optimize(source_initialized, target)
+
+        # Prepare result
+        result = (current_rotation, initial_rotation, initial_translation, current_metric)
+
+        result_queue.put((n, result))
+
+    def parallel_multistart_registration(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float]:
+        """Perform multistart registration on the source and target point clouds.
+        :param source: Source point cloud
+        :param target: Target point cloud
+
+        :return: (best_transformation, metric): (best transformation matrix, best metric)
+        """
+
+        # Initial metric and transformation
+        metric = np.inf
+        best_transformation = np.eye(4)
+
+        processes = []
+        result_queue = multiprocessing.Queue()
+
+        for n in range(self.n_attempts):
+            print('Starting process', n)
+            process = multiprocessing.Process(
+                target=self._worker,
+                args=(n, source, target, result_queue)
+            )
+            processes.append(process)
+            process.start()
+            num_cores = multiprocessing.cpu_count()
+            print('Number of cores:', num_cores)
+            # TODO improve checks on processes
+            if len(processes) == num_cores:
+                for process in processes:
+                    process.join()
+                processes = []
+            for process in processes:
+                process.join()
+
+        # Collect results
+        while not result_queue.empty():
+            _, (current_rotation, initial_rotation, initial_translation, current_metric) = result_queue.get()
+            print(f'Process {_} finished with RMSE:', current_metric)
+
+            if current_metric < metric:
+                metric = current_metric
+                T = np.eye(4)
+                T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
+                T[:3, 3] = np.dot(current_rotation[:3, :3], initial_translation).ravel() + initial_translation
+                best_transformation = T
+
+        return best_transformation, metric
+
     def compass_step(self, source: np.ndarray, target: np.ndarray, scale_factors: np.ndarray, delta: np.ndarray) -> Tuple[np.ndarray, np.ndarray, float]:
         """Perform a single compass step to find the optimal scaling factor for the target cloud.
         :param source: Source point cloud
@@ -94,7 +157,8 @@ class Aligner:
         """
         new_scale_factors = scale_factors + delta
         target_scaled = target * new_scale_factors
-        current_rotation, current_metric = self.multistart_registration(source, target_scaled)
+        # current_rotation, current_metric = self.multistart_registration(source, target_scaled)
+        current_rotation, current_metric = self.parallel_multistart_registration(source, target)
 
         return new_scale_factors, current_rotation, current_metric
 
@@ -105,7 +169,8 @@ class Aligner:
 
         optimal_scale_factors = np.ones((1, 3))
 
-        optimal_transformation, optimal_metric = self.multistart_registration(source, target)
+        # optimal_transformation, optimal_metric = self.multistart_registration(source, target)
+        optimal_transformation, optimal_metric = self.parallel_multistart_registration(source, target)
 
         # INITIALIZE ERRORS LIST
         errors = [optimal_metric]
