@@ -6,8 +6,14 @@ import open3d as o3d
 
 
 class VoxelDownsampler(IProcessBlock):
-    def __init__(self, target_points: int, base_voxel_size: float = 0.1,
-                 min_voxel_size: float = 0.005, delta: float = 0.05, eps: float = 0.001):
+    def __init__(
+        self,
+        target_points: int,
+        base_voxel_size: float = 0.1,
+        min_voxel_size: float = 0.005,
+        delta: float = 0.05,
+        eps: float = 0.001,
+    ):
         self.target_points = target_points
         self.min_voxel_size = min_voxel_size
         # TODO evaluate if is better create another type of class to estimate the voxel size
@@ -15,7 +21,9 @@ class VoxelDownsampler(IProcessBlock):
         self.delta = delta
         self.eps = eps
 
-    def compass_step(self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float):
+    def compass_step(
+        self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
+    ):
         new_voxel_size = current_voxel_size + delta
         if new_voxel_size <= self.min_voxel_size:
             new_voxel_size = self.min_voxel_size
@@ -38,18 +46,18 @@ class VoxelDownsampler(IProcessBlock):
         metric = np.abs(self.target_points - n_points)
 
         while self.delta >= self.eps:
-            obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(self.delta,
-                                                                                source_point_cloud,
-                                                                                current_voxel_size)
+            obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(
+                self.delta, source_point_cloud, current_voxel_size
+            )
 
             if obtained_metric < metric:
                 current_voxel_size = new_voxel_size
                 metric = obtained_metric
                 continue
 
-            obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(-self.delta,
-                                                                                source_point_cloud,
-                                                                                current_voxel_size)
+            obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(
+                -self.delta, source_point_cloud, current_voxel_size
+            )
 
             if obtained_metric < metric:
                 current_voxel_size = new_voxel_size
@@ -59,5 +67,3 @@ class VoxelDownsampler(IProcessBlock):
             self.delta = self.delta / 2
 
         return np.asarray(obtained_cloud.points)
-
-

@@ -4,7 +4,7 @@ from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
 
-class FarthesDownsampler(IProcessBlock):
+class FarthestDownsampler(IProcessBlock):
     def __init__(self, sample_size: int):
         self.sample_size = sample_size
 

@@ -1,6 +1,8 @@
-from  typing import List
+from typing import List
 from Preprocessor.iProcessBlock import IProcessBlock
 import numpy as np
+
+
 class Preprocessor:
     def __init__(self, preprocessor_blocks: List[IProcessBlock]):
         self.preprocessor_blocks = preprocessor_blocks

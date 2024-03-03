@@ -1,4 +1,4 @@
-from  typing import List
+from typing import List
 from Preprocessor.iProcessBlock import IProcessBlock
 import numpy as np
 
@@ -10,4 +10,6 @@ class RandomDownsampler(IProcessBlock):
 
     def process(self, cloud: np.ndarray) -> np.ndarray:
         # Downsample data
-        return cloud[np.random.choice(cloud.shape[0], self.sample_size, replace=self.replace)]
+        return cloud[
+            np.random.choice(cloud.shape[0], self.sample_size, replace=self.replace)
+        ]
