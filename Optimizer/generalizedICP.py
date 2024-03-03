@@ -14,6 +14,11 @@ class GeneralizedICP(IOptimizer):
         max_correspondence_distance: float = __MAX_CORRESPONDENCE_DISTANCE__,
         max_iterations: int = __MAX_ITERATIONS__,
     ):
+        """
+        Refer to this link: https://www.robots.ox.ac.uk/~avsegal/resources/papers/Generalized_ICP.pdf for parameters explanation
+        :param max_correspondence_distance:
+        :param max_iterations:
+        """
 
         self._LOG = LoggerFactory.get_logger(
             log_name=self.__class__.__name__, log_on_file=False
