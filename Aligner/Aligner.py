@@ -9,23 +9,34 @@ import numpy as np
 from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
 from utils.logger_factory import LoggerFactory
+from utils.constants import (
+    __ALINER_N_ATTEMPTS__,
+    __ALIGNER_DEG__,
+    __ALIGNER_MU__,
+    __ALIGNER_STD__,
+    __ALIGNER_MAX_ITER__,
+    __ALIGNER_DELTA__,
+    __ALIGNER_EPSILON__,
+)
 
 
 class Aligner:
     def __init__(
-            self,
-            source_preprocessor: Preprocessor,
-            target_preprocessor: Preprocessor,
-            optimizer: IOptimizer,
-            n_attempts: int = 100,
-            deg=0.2,
-            mu=0,
-            std=0.1,
-            delta=0.1,
-            max_iter=100,
-            eps=1e-6,
+        self,
+        source_preprocessor: Preprocessor,
+        target_preprocessor: Preprocessor,
+        optimizer: IOptimizer,
+        n_attempts: int = __ALINER_N_ATTEMPTS__,
+        deg: float = __ALIGNER_DEG__,
+        mu: float = __ALIGNER_MU__,
+        std: float = __ALIGNER_STD__,
+        delta: float = __ALIGNER_DELTA__,
+        max_iter: int = __ALIGNER_MAX_ITER__,
+        eps: float = __ALIGNER_EPSILON__,
     ):
         """
+        Wrapper function that takes the inner block optimizer, the preprocessors and runs a multi-start optimization on
+        the source and target cloud.
         :param source_preprocessor: Source cloud preprocessor
         :param target_preprocessor: Target cloud preprocessor
         :param optimizer: iOptimizer inherited class to run a single optimization
@@ -33,28 +44,77 @@ class Aligner:
         :param deg: initial rotation matrix angle
         :param mu: initial translation vector mean
         :param std: initial translation vector standard deviation
+        :param delta: initial compass step
+        :param max_iter: maximum number of iterations for the compass search
+        :param eps: stopping criteria on delta for the compass search
         """
 
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=True)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=True
+        )
 
-        self.source_preprocessor = source_preprocessor
-        self.target_preprocessor = target_preprocessor
-        self.optimizer = optimizer
-        self.delta = delta
-        self.max_iter = max_iter
-        self.eps = eps
-        self.mu = mu
-        self.std = std
-        self.deg = deg
-        self.n_attempts = n_attempts
+        if n_attempts <= 0:
+            msg = f"n_attempts cannot be 0 or less. Provided: {n_attempts}"
+            self._LOG.warning(msg)
+            self._n_attempts = __ALINER_N_ATTEMPTS__
+        else:
+            self._n_attempts = n_attempts
+
+        if deg <= 0:
+            msg = f"deg cannot be 0 or less. Provided: {deg}"
+            self._LOG.warning(msg)
+            self._deg = __ALIGNER_DEG__
+        else:
+            self._deg = deg
+
+        if mu <= 0:
+            msg = f"mu cannot be 0 or less. Provided: {mu}"
+            self._LOG.warning(msg)
+            self._mu = __ALIGNER_MU__
+        else:
+            self._mu = mu
+
+        if std <= 0:
+            msg = f"std cannot be 0 or less. Provided: {std}"
+            self._LOG.warning(msg)
+            self._std = __ALIGNER_STD__
+        else:
+            self._std = std
+
+        if delta <= 0:
+            msg = f"delta cannot be 0 or less. Provided: {delta}"
+            self._LOG.warning(msg)
+            self._delta = __ALIGNER_DELTA__
+        else:
+            self._delta = delta
+
+        if max_iter <= 0:
+            msg = f"max_iter cannot be 0 or less. Provided: {max_iter}"
+            self._LOG.warning(msg)
+            self._max_iter = __ALIGNER_MAX_ITER__
+        else:
+            self._max_iter = max_iter
+
+        if eps <= 0:
+            msg = f"eps cannot be 0 or less. Provided: {eps}"
+            self._LOG.warning(msg)
+            self._eps = __ALIGNER_EPSILON__
+        else:
+            self._eps = eps
+
+        self._source_preprocessor = source_preprocessor
+        self._target_preprocessor = target_preprocessor
+        self._optimizer = optimizer
+
+        self._LOG.debug(f"Initialized {self.__class__.__name__} with {self}")
 
     def initialize_rotation(self) -> Tuple[np.ndarray, np.ndarray]:
         """Generate a random transformation matrix for a single multi start registration run."""
 
         # Generate random angles
-        theta_1 = np.random.uniform(low=-self.deg, high=self.deg)
-        theta_2 = np.random.uniform(low=-self.deg, high=self.deg)
-        theta_3 = np.random.uniform(low=-self.deg, high=self.deg)
+        theta_1 = np.random.uniform(low=-self._deg, high=self._deg)
+        theta_2 = np.random.uniform(low=-self._deg, high=self._deg)
+        theta_3 = np.random.uniform(low=-self._deg, high=self._deg)
 
         # Create the 3 basic rotation matrices
         r_1 = np.array(
@@ -83,12 +143,12 @@ class Aligner:
         rotation_matrix = np.dot(r_1, np.dot(r_2, r_3))
 
         # Generate random translation vector
-        translation = self.mu + np.random.randn(3) * self.std
+        translation = self._mu + np.random.randn(3) * self._std
 
         return rotation_matrix, translation
 
     def multistart_registration(
-            self, source: np.ndarray, target: np.ndarray
+        self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         """Perform multi-start registration on the source and target point clouds.
         :param source: Source point cloud
@@ -101,17 +161,17 @@ class Aligner:
         metric = np.inf
         best_transformation = np.eye(4)
 
-        for n in range(self.n_attempts):  # tqdm
+        for n in range(self._n_attempts):  # tqdm
             source_copy = copy.deepcopy(source)
 
             # Generate random rotation and translation matrices
             initial_rotation, initial_translation = self.initialize_rotation()
             source_initialized = (
-                    np.dot(source_copy, initial_rotation) + initial_translation
+                np.dot(source_copy, initial_rotation) + initial_translation
             )
 
             # Perform registration
-            current_rotation, current_metric = self.optimizer.optimize(
+            current_rotation, current_metric = self._optimizer.optimize(
                 source_initialized, target
             )
 
@@ -122,8 +182,8 @@ class Aligner:
                 T = np.eye(4)
                 T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
                 T[:3, 3] = (
-                        np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                        + initial_translation
+                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
+                    + initial_translation
                 )
                 best_transformation = T
 
@@ -138,7 +198,7 @@ class Aligner:
         source_initialized = np.dot(source_copy, initial_rotation) + initial_translation
 
         # Perform registration
-        current_rotation, current_metric = self.optimizer.optimize(
+        current_rotation, current_metric = self._optimizer.optimize(
             source_initialized, target
         )
 
@@ -154,7 +214,7 @@ class Aligner:
         # print('Process', n, 'finished')
 
     def parallel_multistart_registration(
-            self, source: np.ndarray, target: np.ndarray
+        self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         """Perform multistart registration on the source and target point clouds.
         :param source: Source point cloud
@@ -171,8 +231,8 @@ class Aligner:
         result_queue = multiprocessing.Queue()
         num_cores = multiprocessing.cpu_count()
         # print('Number of cores:', num_cores)
-        # print('Number of attempts:', self.n_attempts)
-        for n in range(self.n_attempts):
+        # print('Number of attempts:', self._n_attempts)
+        for n in range(self._n_attempts):
             process = multiprocessing.Process(
                 target=self._worker, args=(n, source, target, result_queue)
             )
@@ -204,19 +264,19 @@ class Aligner:
                 T = np.eye(4)
                 T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
                 T[:3, 3] = (
-                        np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                        + initial_translation
+                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
+                    + initial_translation
                 )
                 best_transformation = T
 
         return best_transformation, metric
 
     def compass_step(
-            self,
-            source: np.ndarray,
-            target: np.ndarray,
-            scale_factors: np.ndarray,
-            delta: np.ndarray,
+        self,
+        source: np.ndarray,
+        target: np.ndarray,
+        scale_factors: np.ndarray,
+        delta: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray, float]:
         """Perform a single compass step to find the optimal scaling factor for the target cloud.
         :param source: Source point cloud
@@ -228,18 +288,20 @@ class Aligner:
         """
         new_scale_factors = scale_factors + delta
         target_scaled = target * new_scale_factors
-        current_rotation, current_metric = self.multistart_registration(source, target_scaled)
-        # current_rotation, current_metric = self.parallel_multistart_registration(
+        current_rotation, current_metric = self.multistart_registration(
+            source, target_scaled
+        )
+        # current_rotation, current_metric = self._parallel_multistart_registration(
         #     source, target
         # )
 
         return new_scale_factors, current_rotation, current_metric
 
     def align(
-            self, source: np.ndarray, target: np.ndarray
+        self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float, List[float]]:
-        source = self.source_preprocessor.preprocess(source)
-        target = self.target_preprocessor.preprocess(target)
+        source = self._source_preprocessor.preprocess(source)
+        target = self._target_preprocessor.preprocess(target)
         iteration = 0
 
         optimal_scale_factors = np.ones((1, 3))
@@ -248,7 +310,7 @@ class Aligner:
         optimal_transformation, optimal_metric = self.multistart_registration(
             source, target
         )
-        # optimal_transformation, optimal_metric = self.parallel_multistart_registration(source, target)
+        # optimal_transformation, optimal_metric = self._parallel_multistart_registration(source, target)
         print("Multistart registration time:", time.time() - start)
 
         # INITIALIZE ERRORS LIST
@@ -256,12 +318,12 @@ class Aligner:
         print("rmse star", optimal_metric)
         directions = np.eye(3)
 
-        while self.delta >= self.eps and iteration <= self.max_iter:
+        while self._delta >= self._eps and iteration <= self._max_iter:
             # UPDATE ITERATION COUNTER
             iteration += 1
-            print("Iteration number:", iteration, "Current step:", self.delta)
+            print("Iteration number:", iteration, "Current step:", self._delta)
             for axis in range(3):
-                scale_plus = self.delta * directions[:, axis]
+                scale_plus = self._delta * directions[:, axis]
                 new_scale_factors, new_rotation, new_metric = self.compass_step(
                     source, target, optimal_scale_factors, scale_plus
                 )
@@ -275,7 +337,7 @@ class Aligner:
                     break
 
                 # SCALE TARGET CLOUD
-                scale_neg = -self.delta * directions[:, axis]
+                scale_neg = -self._delta * directions[:, axis]
                 new_scale_factors, new_rotation, new_metric = self.compass_step(
                     source, target, optimal_scale_factors, scale_neg
                 )
@@ -290,7 +352,21 @@ class Aligner:
             # TODO (ADD try/except?)
             # UPDATE DELTA
             if new_metric > optimal_metric:
-                self.delta = self.delta / 2
-                print("Delta updated:", self.delta)
+                self._delta = self._delta / 2
+                print("Delta updated:", self._delta)
 
         return optimal_transformation, optimal_metric, errors
+
+    def __repr__(self):
+        return f"""{self.__class__.__name__}
+            (source_preprocessor={self._source_preprocessor},
+            target_preprocessor={self._target_preprocessor},
+            optimizer={self._optimizer},
+            n_attempts={self._n_attempts},
+            deg={self._deg},
+            mu={self._mu},
+            std={self._std},
+            delta={self._delta},
+            max_iter={self._max_iter},
+            eps={self._eps})
+        """

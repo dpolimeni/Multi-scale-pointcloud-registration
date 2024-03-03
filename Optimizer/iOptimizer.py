@@ -8,7 +8,7 @@ class IOptimizer(ABC):
 
     @abstractmethod
     def optimize(
-            self, source: np.ndarray, target: np.ndarray, **kwargs
+        self, source: np.ndarray, target: np.ndarray, **kwargs
     ) -> Tuple[np.ndarray, float]:
         """Method to run the inner block optimizer.
 
@@ -19,5 +19,4 @@ class IOptimizer(ABC):
         Returns:
             Tuple[np.ndarray, float]: A tuple with the Roto-translation matrix and inlier RMSE of the solution
         """
-        # TODO evaluate potential other parameters needed
         pass
