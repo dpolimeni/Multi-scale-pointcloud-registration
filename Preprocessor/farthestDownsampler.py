@@ -33,3 +33,6 @@ class FarthestDownsampler(IProcessBlock):
             index_list[i + 1] = fp_index
 
         return cloud[index_list]
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(sample_size={self.sample_size})"

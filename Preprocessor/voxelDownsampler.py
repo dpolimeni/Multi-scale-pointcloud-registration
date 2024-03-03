@@ -35,14 +35,36 @@ class VoxelDownsampler(IProcessBlock):
             msg = f"target points cannot be 0 or less. Provided: {target_points}"
             self._LOG.error(msg)
             raise ValueError(msg)
+        else:
+            self._target_points = target_points
 
-        self.target_points = target_points
+        if min_voxel_size <= 0:
+            msg = f"min voxel size cannot be 0 or less. Provided: {min_voxel_size}. Using default value: {__MIN_VOXEL_SIZE__}"
+            self._LOG.warning(msg)
+            self._min_voxel_size = __MIN_VOXEL_SIZE__
+        else:
+            self._min_voxel_size = min_voxel_size
 
-        self.min_voxel_size = min_voxel_size
-
-        self.base_voxel_size = base_voxel_size
-        self.delta = delta
-        self.eps = eps
+        if base_voxel_size <= 0:
+            msg = f"base voxel size cannot be 0 or less. Provided: {base_voxel_size}. Using default value: {__BASE_VOXEL_SIZE__}"
+            self._LOG.warning(msg)
+            self._base_voxel_size = __BASE_VOXEL_SIZE__
+        else:
+            self._base_voxel_size = base_voxel_size
+            
+        if delta <= 0:
+            msg = f"delta cannot be 0 or less. Provided: {delta}. Using default value: {__DELTA__}"
+            self._LOG.warning(msg)
+            self._delta = __DELTA__
+        else:
+            self._delta = delta
+            
+        if eps <= 0:
+            msg = f"eps cannot be 0 or less. Provided: {eps}. Using default value: {__EPS__}"
+            self._LOG.warning(msg)
+            self._eps = __EPS__
+        else:
+            self._eps = eps
 
         self._LOG.debug(msg=f"initialized downsampler: {self}")
 
@@ -50,16 +72,16 @@ class VoxelDownsampler(IProcessBlock):
             self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
     ):
         new_voxel_size = current_voxel_size + delta
-        if new_voxel_size <= self.min_voxel_size:
-            new_voxel_size = self.min_voxel_size
+        if new_voxel_size <= self._min_voxel_size:
+            new_voxel_size = self._min_voxel_size
         cloud_ds = cloud.voxel_down_sample(new_voxel_size)
         n_points = np.asarray(cloud_ds.points).shape[0]
-        metric = np.abs(self.target_points - n_points)
+        metric = np.abs(self._target_points - n_points)
         return cloud_ds, new_voxel_size, metric
 
     def process(self, cloud: np.ndarray):
         """Get the voxel size of the cloud needed for target sample size"""
-        current_voxel_size = self.base_voxel_size
+        current_voxel_size = self._base_voxel_size
         source_point_cloud = o3d.geometry.PointCloud()
         source_point_cloud.points = o3d.utility.Vector3dVector(cloud)
 
@@ -68,11 +90,11 @@ class VoxelDownsampler(IProcessBlock):
         # Get number of points
         n_points = np.asarray(obtained_cloud.points).shape[0]
         # Compute Metric
-        metric = np.abs(self.target_points - n_points)
+        metric = np.abs(self._target_points - n_points)
 
-        while self.delta >= self.eps:
+        while self._delta >= self._eps:
             obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(
-                self.delta, source_point_cloud, current_voxel_size
+                self._delta, source_point_cloud, current_voxel_size
             )
 
             if obtained_metric < metric:
@@ -81,7 +103,7 @@ class VoxelDownsampler(IProcessBlock):
                 continue
 
             obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(
-                -self.delta, source_point_cloud, current_voxel_size
+                -self._delta, source_point_cloud, current_voxel_size
             )
 
             if obtained_metric < metric:
@@ -89,17 +111,17 @@ class VoxelDownsampler(IProcessBlock):
                 metric = obtained_metric
                 continue
 
-            self.delta = self.delta / 2
+            self._delta = self._delta / 2
 
         return np.asarray(obtained_cloud.points)
 
     def __repr__(self):
         return (
             f"{self.__class__.__name__}("
-            f"target_points={self.target_points}, "
-            f"base_voxel_size={self.base_voxel_size}, "
-            f"min_voxel_size={self.min_voxel_size}, "
-            f"delta={self.delta}, "
-            f"eps={self.eps})"
+            f"target_points={self._target_points}, "
+            f"base_voxel_size={self._base_voxel_size}, "
+            f"min_voxel_size={self._min_voxel_size}, "
+            f"delta={self._delta}, "
+            f"eps={self._eps})"
         )
 
