@@ -1,21 +1,19 @@
 import inspect
 import logging
-
 import os
 import sys
 from logging import Logger, FileHandler, Formatter, StreamHandler
 
 from utils.constants import __LOG_FOLDER__, __DEFAULT_LOG_FORMAT__
 
-class LoggerFactory:
 
+class LoggerFactory:
     """
     Use this class to generate custom loggers!
     """
 
     def __init__(self):
         pass
-
 
     @staticmethod
     def get_logger(
@@ -43,8 +41,8 @@ class LoggerFactory:
         """
 
         # GET LOGGER NAME (USE CALLER FILE IF NOT PROVIDED)
-        _log_name = log_name\
-            if log_name is not None\
+        _log_name = log_name \
+            if log_name is not None \
             else os.path.splitext(os.path.basename(inspect.stack()[1].filename))[0]
 
         # INITIALIZE LOGGER
@@ -91,14 +89,3 @@ class LoggerFactory:
         logger.addHandler(hdlr=console_handler)
 
         return logger
-
-
-
-
-
-
-
-
-
-
-

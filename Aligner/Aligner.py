@@ -1,28 +1,29 @@
 import copy
-from typing import Tuple
-from Preprocessor.preprocessor import Preprocessor
-from Optimizer.iOptimizer import IOptimizer
-import numpy as np
-from typing import List
 import multiprocessing
 import time
+from typing import List
+from typing import Tuple
 
+import numpy as np
+
+from Optimizer.iOptimizer import IOptimizer
+from Preprocessor.preprocessor import Preprocessor
 from utils.logger_factory import LoggerFactory
 
 
 class Aligner:
     def __init__(
-        self,
-        source_preprocessor: Preprocessor,
-        target_preprocessor: Preprocessor,
-        optimizer: IOptimizer,
-        n_attempts: int = 100,
-        deg=0.2,
-        mu=0,
-        std=0.1,
-        delta=0.1,
-        max_iter=100,
-        eps=1e-6,
+            self,
+            source_preprocessor: Preprocessor,
+            target_preprocessor: Preprocessor,
+            optimizer: IOptimizer,
+            n_attempts: int = 100,
+            deg=0.2,
+            mu=0,
+            std=0.1,
+            delta=0.1,
+            max_iter=100,
+            eps=1e-6,
     ):
         """
         :param source_preprocessor: Source cloud preprocessor
@@ -87,7 +88,7 @@ class Aligner:
         return rotation_matrix, translation
 
     def multistart_registration(
-        self, source: np.ndarray, target: np.ndarray
+            self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         """Perform multi-start registration on the source and target point clouds.
         :param source: Source point cloud
@@ -106,7 +107,7 @@ class Aligner:
             # Generate random rotation and translation matrices
             initial_rotation, initial_translation = self.initialize_rotation()
             source_initialized = (
-                np.dot(source_copy, initial_rotation) + initial_translation
+                    np.dot(source_copy, initial_rotation) + initial_translation
             )
 
             # Perform registration
@@ -121,8 +122,8 @@ class Aligner:
                 T = np.eye(4)
                 T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
                 T[:3, 3] = (
-                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                    + initial_translation
+                        np.dot(current_rotation[:3, :3], initial_translation).ravel()
+                        + initial_translation
                 )
                 best_transformation = T
 
@@ -153,7 +154,7 @@ class Aligner:
         # print('Process', n, 'finished')
 
     def parallel_multistart_registration(
-        self, source: np.ndarray, target: np.ndarray
+            self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         """Perform multistart registration on the source and target point clouds.
         :param source: Source point cloud
@@ -203,19 +204,19 @@ class Aligner:
                 T = np.eye(4)
                 T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
                 T[:3, 3] = (
-                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                    + initial_translation
+                        np.dot(current_rotation[:3, :3], initial_translation).ravel()
+                        + initial_translation
                 )
                 best_transformation = T
 
         return best_transformation, metric
 
     def compass_step(
-        self,
-        source: np.ndarray,
-        target: np.ndarray,
-        scale_factors: np.ndarray,
-        delta: np.ndarray,
+            self,
+            source: np.ndarray,
+            target: np.ndarray,
+            scale_factors: np.ndarray,
+            delta: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray, float]:
         """Perform a single compass step to find the optimal scaling factor for the target cloud.
         :param source: Source point cloud
@@ -235,7 +236,7 @@ class Aligner:
         return new_scale_factors, current_rotation, current_metric
 
     def align(
-        self, source: np.ndarray, target: np.ndarray
+            self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float, List[float]]:
         source = self.source_preprocessor.preprocess(source)
         target = self.target_preprocessor.preprocess(target)

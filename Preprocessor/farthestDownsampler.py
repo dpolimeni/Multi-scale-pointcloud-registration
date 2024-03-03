@@ -1,7 +1,8 @@
-from Preprocessor.iProcessBlock import IProcessBlock
 import numpy as np
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
+
+from Preprocessor.iProcessBlock import IProcessBlock
 
 
 class FarthestDownsampler(IProcessBlock):

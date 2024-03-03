@@ -1,8 +1,8 @@
-import copy
 from typing import Tuple
 
 import numpy as np
 import open3d as o3d
+
 from Optimizer.iOptimizer import IOptimizer
 
 
@@ -12,7 +12,7 @@ class GeneralizedICP(IOptimizer):
         self.max_iterations = max_iterations
 
     def optimize(
-        self, source: np.ndarray, target: np.ndarray
+            self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         icp_type = (
             o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()

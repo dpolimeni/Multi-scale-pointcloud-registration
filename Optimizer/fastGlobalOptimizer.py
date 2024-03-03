@@ -3,20 +3,21 @@ from typing import Tuple
 
 import numpy as np
 import open3d as o3d
+
 from Optimizer.iOptimizer import IOptimizer
 
 
 class FastGlobalOptimizer(IOptimizer):
     def __init__(
-        self,
-        division_factor: float,
-        tuple_scale: float,
-        maximum_correspondence_distance: float,
-        iteration_number: int,
-        decrease_mu: bool,
-        fpfh_radius: float,
-        fpfh_knn: int,
-        fpfh_radius_features: int,
+            self,
+            division_factor: float,
+            tuple_scale: float,
+            maximum_correspondence_distance: float,
+            iteration_number: int,
+            decrease_mu: bool,
+            fpfh_radius: float,
+            fpfh_knn: int,
+            fpfh_radius_features: int,
     ):
         # TODO (comment the init variables and refer to the article do not even remember some of them)
         self.division_factor = division_factor
@@ -31,9 +32,9 @@ class FastGlobalOptimizer(IOptimizer):
         self.fpfh_radius_features = fpfh_radius_features
 
     def get_fpfh_features(
-        self,
-        source_point_cloud: o3d.geometry.PointCloud,
-        target_point_cloud: o3d.geometry.PointCloud,
+            self,
+            source_point_cloud: o3d.geometry.PointCloud,
+            target_point_cloud: o3d.geometry.PointCloud,
     ) -> Tuple[o3d.pipelines.registration.Feature, o3d.pipelines.registration.Feature]:
         source_copy = copy.deepcopy(source_point_cloud)
         target_copy = copy.deepcopy(target_point_cloud)
@@ -68,7 +69,7 @@ class FastGlobalOptimizer(IOptimizer):
         return source_fpfh_features, target_fpfh_features
 
     def optimize(
-        self, source: np.ndarray, target: np.ndarray
+            self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
         source_point_cloud = o3d.geometry.PointCloud()
         target_point_cloud = o3d.geometry.PointCloud()

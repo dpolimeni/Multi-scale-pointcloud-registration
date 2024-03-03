@@ -17,3 +17,11 @@ __LOG_FOLDER__ = os.path.join(__ROOT__, "logs", __DATETIME_NOW__)
 
 # LOG DEFAULT FORMAT
 __DEFAULT_LOG_FORMAT__ = "%(asctime)s | %(name)s | %(levelname)s : %(message)s"
+
+
+# DOWN SAMPLERS
+# VOXEL DOWN SAMPLER
+__BASE_VOXEL_SIZE__ = 0.1
+__MIN_VOXEL_SIZE__ = 0.005
+__DELTA__ = 0.05
+__EPS__ = 0.001

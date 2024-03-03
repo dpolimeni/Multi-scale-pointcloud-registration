@@ -6,15 +6,15 @@ Created on Wed Jun 22 17:03:54 2022
 """
 
 "IMPORT LIBRARIES"
-from copy import deepcopy
-import yaml
 import os
 import sys
+from copy import deepcopy
 from datetime import datetime
+
+import yaml
 
 sys.path.append("../")
 from utils.util_mcs_registration import *
-
 
 if __name__ == "__main__":
 

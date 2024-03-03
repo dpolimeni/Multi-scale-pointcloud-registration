@@ -1,6 +1,6 @@
-from typing import List
-from Preprocessor.iProcessBlock import IProcessBlock
 import numpy as np
+
+from Preprocessor.iProcessBlock import IProcessBlock
 
 
 class RandomDownsampler(IProcessBlock):

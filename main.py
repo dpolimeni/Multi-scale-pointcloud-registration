@@ -1,16 +1,16 @@
-from Aligner.Aligner import Aligner
-from Preprocessor.preprocessor import Preprocessor
-from Preprocessor.randomDownsampler import RandomDownsampler
-from Preprocessor.farthestDownsampler import FarthestDownsampler
-from Preprocessor.voxelDownsampler import VoxelDownsampler
-from Optimizer.fastGlobalOptimizer import FastGlobalOptimizer
-from Optimizer.generalizedICP import GeneralizedICP
+import os
+import time
+
 import numpy as np
 import open3d as o3d
-import copy
-import time
-import os
 import yaml
+
+from Aligner.Aligner import Aligner
+from Optimizer.generalizedICP import GeneralizedICP
+from Preprocessor.farthestDownsampler import FarthestDownsampler
+from Preprocessor.preprocessor import Preprocessor
+from Preprocessor.randomDownsampler import RandomDownsampler
+from Preprocessor.voxelDownsampler import VoxelDownsampler
 
 
 def main():
