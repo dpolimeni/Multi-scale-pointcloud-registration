@@ -292,12 +292,12 @@ class Aligner:
         """
         new_scale_factors = scale_factors + delta
         target_scaled = target * new_scale_factors
-        # current_rotation, current_metric = self.multistart_registration(
-        #    source, target_scaled
-        # )
-        current_rotation, current_metric = self.parallel_multistart_registration(
+        current_rotation, current_metric = self.multistart_registration(
             source, target_scaled
         )
+        # current_rotation, current_metric = self.parallel_multistart_registration(
+        #     source, target_scaled
+        # )
 
         return new_scale_factors, current_rotation, current_metric
 
@@ -311,12 +311,12 @@ class Aligner:
         optimal_scale_factors = np.ones((1, 3))
 
         start = time.time()
-        # optimal_transformation, optimal_metric = self.multistart_registration(
-        #    source, target
-        # )
-        optimal_transformation, optimal_metric = self.parallel_multistart_registration(
+        optimal_transformation, optimal_metric = self.multistart_registration(
             source, target
         )
+        # optimal_transformation, optimal_metric = self.parallel_multistart_registration(
+        #     source, target
+        # )
         self._LOG.info(f"Multi-start registration time: {time.time() - start}")
 
         # INITIALIZE ERRORS LIST
