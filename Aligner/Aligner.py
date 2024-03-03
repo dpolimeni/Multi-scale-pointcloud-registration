@@ -10,7 +10,7 @@ from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
 from utils.logger_factory import LoggerFactory
 from utils.constants import (
-    __ALINER_N_ATTEMPTS__,
+    __ALINER_ATTEMPTS__,
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
     __ALIGNER_STD__,
@@ -26,7 +26,7 @@ class Aligner:
         source_preprocessor: Preprocessor,
         target_preprocessor: Preprocessor,
         optimizer: IOptimizer,
-        n_attempts: int = __ALINER_N_ATTEMPTS__,
+        attempts: int = __ALINER_ATTEMPTS__,
         deg: float = __ALIGNER_DEG__,
         mu: float = __ALIGNER_MU__,
         std: float = __ALIGNER_STD__,
@@ -40,7 +40,7 @@ class Aligner:
         :param source_preprocessor: Source cloud preprocessor
         :param target_preprocessor: Target cloud preprocessor
         :param optimizer: iOptimizer inherited class to run a single optimization
-        :param n_attempts: number of multi-start attempts
+        :param attempts: number of multi-start attempts
         :param deg: initial rotation matrix angle
         :param mu: initial translation vector mean
         :param std: initial translation vector standard deviation
@@ -53,12 +53,12 @@ class Aligner:
             log_name=self.__class__.__name__, log_on_file=True
         )
 
-        if n_attempts <= 0:
-            msg = f"n_attempts cannot be 0 or less. Provided: {n_attempts}"
+        if attempts <= 0:
+            msg = f"attempts cannot be 0 or less. Provided: {attempts}"
             self._LOG.warning(msg)
-            self._n_attempts = __ALINER_N_ATTEMPTS__
+            self._attempts = __ALINER_N_ATTEMPTS__
         else:
-            self._n_attempts = n_attempts
+            self._attempts = attempts
 
         if deg <= 0:
             msg = f"deg cannot be 0 or less. Provided: {deg}"
@@ -161,7 +161,7 @@ class Aligner:
         metric = np.inf
         best_transformation = np.eye(4)
 
-        for n in range(self._n_attempts):  # tqdm
+        for n in range(self._attempts):  # tqdm
             source_copy = copy.deepcopy(source)
 
             # Generate random rotation and translation matrices
@@ -231,8 +231,8 @@ class Aligner:
         result_queue = multiprocessing.Queue()
         num_cores = multiprocessing.cpu_count()
         # print('Number of cores:', num_cores)
-        # print('Number of attempts:', self._n_attempts)
-        for n in range(self._n_attempts):
+        # print('Number of attempts:', self._attempts)
+        for n in range(self._attempts):
             process = multiprocessing.Process(
                 target=self._worker, args=(n, source, target, result_queue)
             )
@@ -362,7 +362,7 @@ class Aligner:
             (source_preprocessor={self._source_preprocessor},
             target_preprocessor={self._target_preprocessor},
             optimizer={self._optimizer},
-            n_attempts={self._n_attempts},
+            attempts={self._attempts},
             deg={self._deg},
             mu={self._mu},
             std={self._std},
