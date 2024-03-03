@@ -4,15 +4,40 @@ import numpy as np
 import open3d as o3d
 
 from Optimizer.iOptimizer import IOptimizer
+from utils.logger_factory import LoggerFactory
+from utils.constants import __MAX_CORRESPONDENCE_DISTANCE__, __MAX_ITERATIONS__
 
 
 class GeneralizedICP(IOptimizer):
-    def __init__(self, max_correspondence_distance: float, max_iterations: int):
-        self.max_correspondence_distance = max_correspondence_distance
-        self.max_iterations = max_iterations
+    def __init__(
+        self,
+        max_correspondence_distance: float = __MAX_CORRESPONDENCE_DISTANCE__,
+        max_iterations: int = __MAX_ITERATIONS__,
+    ):
+
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
+        if max_correspondence_distance <= 0:
+            msg = f"max correspondence distance cannot be 0 or less. Provided: {max_correspondence_distance}"
+            self._LOG.warning(msg)
+            self._max_correspondence_distance = __MAX_CORRESPONDENCE_DISTANCE__
+        else:
+            self._max_correspondence_distance = max_correspondence_distance
+
+        if max_iterations <= 0:
+            msg = f"max iterations cannot be 0 or less. Provided: {max_iterations}"
+            self._LOG.warning(msg)
+            self._max_iterations = __MAX_ITERATIONS__
+        else:
+            self._max_iterations = max_iterations
+
+        self._LOG.debug(
+            f"Initialized {self.__class__.__name__} with parameters: {self}"
+        )
 
     def optimize(
-            self, source: np.ndarray, target: np.ndarray
+        self, source: np.ndarray, target: np.ndarray, **kwargs
     ) -> Tuple[np.ndarray, float]:
         icp_type = (
             o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()
@@ -36,3 +61,9 @@ class GeneralizedICP(IOptimizer):
             )
         )
         return optimization_result.transformation, optimization_result.inlier_rmse
+
+    def __repr__(self):
+        return f"""{self.__class__.__name__}
+            (max_correspondence_distance={self._max_correspondence_distance},
+            max_iterations={self._max_iterations})
+        """
