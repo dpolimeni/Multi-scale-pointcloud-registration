@@ -6,6 +6,7 @@ from typing import Tuple
 
 import numpy as np
 
+from Optimizer.generalizedICP import GeneralizedICP
 from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
 from utils.logger_factory import LoggerFactory
@@ -197,11 +198,10 @@ class Aligner:
         results: multiprocessing.Queue,
     ):
         self._LOG.debug(f"Starting worker {n}")
-        source_copy = copy.deepcopy(source)
 
         # Generate random rotation and translation matrices
         initial_rotation, initial_translation = self.initialize_rotation()
-        source_initialized = np.dot(source_copy, initial_rotation) + initial_translation
+        source_initialized = np.dot(source, initial_rotation) + initial_translation
 
         # Perform registration
         current_rotation, current_metric = self._optimizer.optimize(
@@ -242,8 +242,9 @@ class Aligner:
 
         results = {}
         for n in range(self._attempts):
+            source_copy = copy.deepcopy(source)
             process = multiprocessing.Process(
-                target=self._worker, args=(n, source, target, result_queue)
+                target=self._worker, args=(n, source_copy, target, result_queue)
             )
             processes.append(process)
             process.start()
@@ -311,7 +312,7 @@ class Aligner:
 
         start = time.time()
         # optimal_transformation, optimal_metric = self.multistart_registration(
-        #     source, target
+        #    source, target
         # )
         optimal_transformation, optimal_metric = self.parallel_multistart_registration(
             source, target
