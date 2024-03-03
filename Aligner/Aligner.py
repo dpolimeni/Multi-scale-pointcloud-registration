@@ -10,7 +10,7 @@ from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
 from utils.logger_factory import LoggerFactory
 from utils.constants import (
-    __ALINER_ATTEMPTS__,
+    __ALIGNER_ATTEMPTS__,
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
     __ALIGNER_STD__,
@@ -26,7 +26,7 @@ class Aligner:
         source_preprocessor: Preprocessor,
         target_preprocessor: Preprocessor,
         optimizer: IOptimizer,
-        attempts: int = __ALINER_ATTEMPTS__,
+        attempts: int = __ALIGNER_ATTEMPTS__,
         deg: float = __ALIGNER_DEG__,
         mu: float = __ALIGNER_MU__,
         std: float = __ALIGNER_STD__,
@@ -56,7 +56,7 @@ class Aligner:
         if attempts <= 0:
             msg = f"attempts cannot be 0 or less. Provided: {attempts}"
             self._LOG.warning(msg)
-            self._attempts = __ALINER_N_ATTEMPTS__
+            self._attempts = __ALIGNER_ATTEMPTS__
         else:
             self._attempts = attempts
 
