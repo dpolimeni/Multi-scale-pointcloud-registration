@@ -35,8 +35,8 @@ class VoxelDownsampler(IProcessBlock):
             msg = f"target points cannot be 0 or less. Provided: {target_points}"
             self._LOG.error(msg)
             raise ValueError(msg)
-        else:
-            self._target_points = target_points
+
+        self._target_points = target_points
 
         if min_voxel_size <= 0:
             msg = f"min voxel size cannot be 0 or less. Provided: {min_voxel_size}. Using default value: {__MIN_VOXEL_SIZE__}"

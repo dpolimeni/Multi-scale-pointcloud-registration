@@ -8,5 +8,5 @@ class IProcessBlock(ABC):
 
     @abstractmethod
     def process(self, cloud: np.ndarray) -> np.ndarray:
-        """Processing function of the input/transformed cloud array."""
+        """Processing function of the input cloud array."""
         pass
