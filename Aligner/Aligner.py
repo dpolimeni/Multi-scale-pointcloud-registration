@@ -194,7 +194,7 @@ class Aligner:
         n: int,
         source: np.ndarray,
         target: np.ndarray,
-        results: Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray, float]],
+        results: multiprocessing.Queue,
     ):
         self._LOG.debug(f"Starting worker {n}")
         source_copy = copy.deepcopy(source)
@@ -216,13 +216,13 @@ class Aligner:
             current_metric,
         )
         # Store result
-        results[str(n)] = result
+        results.put((n, result))
         self._LOG.debug(f"Process finished with RMSE: {current_metric}")
 
     def parallel_multistart_registration(
         self, source: np.ndarray, target: np.ndarray
     ) -> Tuple[np.ndarray, float]:
-        """Perform multistart registration on the source and target point clouds.
+        """Perform multi-start registration on the source and target point clouds.
         :param source: Source point cloud
         :param target: Target point cloud
 
@@ -243,7 +243,7 @@ class Aligner:
         results = {}
         for n in range(self._attempts):
             process = multiprocessing.Process(
-                target=self._worker, args=(n, source, target, results)
+                target=self._worker, args=(n, source, target, result_queue)
             )
             processes.append(process)
             process.start()
@@ -252,7 +252,9 @@ class Aligner:
             process.join()
 
         # Collect results
-        for _, result in results.items():
+        while not result_queue.empty():
+
+            _, result = result_queue.get()
             current_rotation, initial_rotation, initial_translation, current_metric = (
                 result
             )
@@ -267,6 +269,9 @@ class Aligner:
                 )
                 best_transformation = T
 
+        self._LOG.debug(
+            f"Parallel multi-start registration finished with RMSE: {metric}"
+        )
         return best_transformation, metric
 
     def compass_step(
@@ -286,12 +291,12 @@ class Aligner:
         """
         new_scale_factors = scale_factors + delta
         target_scaled = target * new_scale_factors
-        current_rotation, current_metric = self.multistart_registration(
+        # current_rotation, current_metric = self.multistart_registration(
+        #    source, target_scaled
+        # )
+        current_rotation, current_metric = self.parallel_multistart_registration(
             source, target_scaled
         )
-        # current_rotation, current_metric = self._parallel_multistart_registration(
-        #     source, target
-        # )
 
         return new_scale_factors, current_rotation, current_metric
 
@@ -305,11 +310,13 @@ class Aligner:
         optimal_scale_factors = np.ones((1, 3))
 
         start = time.time()
-        optimal_transformation, optimal_metric = self.multistart_registration(
+        # optimal_transformation, optimal_metric = self.multistart_registration(
+        #     source, target
+        # )
+        optimal_transformation, optimal_metric = self.parallel_multistart_registration(
             source, target
         )
-        # optimal_transformation, optimal_metric = self._parallel_multistart_registration(source, target)
-        self._LOG.info(f"Multistart registration time: {time.time() - start}")
+        self._LOG.info(f"Multi-start registration time: {time.time() - start}")
 
         # INITIALIZE ERRORS LIST
         errors = [optimal_metric]
