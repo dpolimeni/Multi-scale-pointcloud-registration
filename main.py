@@ -106,7 +106,7 @@ def main():
         source_preprocessor,
         target_preprocessor,
         optimizer,
-        n_attempts=n_attempts,
+        attempts=n_attempts,
         deg=deg,
         mu=mu,
         std=std,

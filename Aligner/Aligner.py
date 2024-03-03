@@ -1,7 +1,7 @@
 import copy
 import multiprocessing
 import time
-from typing import List
+from typing import List, Dict
 from typing import Tuple
 
 import numpy as np
@@ -189,8 +189,14 @@ class Aligner:
 
         return best_transformation, metric
 
-    def _worker(self, n: multiprocessing.Queue, source, target, result_queue):
-        # print('Starting process', n)
+    def _worker(
+        self,
+        n: int,
+        source: np.ndarray,
+        target: np.ndarray,
+        results: Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray, float]],
+    ):
+        self._LOG.debug(f"Starting worker {n}")
         source_copy = copy.deepcopy(source)
 
         # Generate random rotation and translation matrices
@@ -209,9 +215,9 @@ class Aligner:
             initial_translation,
             current_metric,
         )
-
-        result_queue.put((n, result))
-        # print('Process', n, 'finished')
+        # Store result
+        results[str(n)] = result
+        self._LOG.debug(f"Process finished with RMSE: {current_metric}")
 
     def parallel_multistart_registration(
         self, source: np.ndarray, target: np.ndarray
@@ -230,34 +236,26 @@ class Aligner:
         processes = []
         result_queue = multiprocessing.Queue()
         num_cores = multiprocessing.cpu_count()
-        # print('Number of cores:', num_cores)
-        # print('Number of attempts:', self._attempts)
+        self._LOG.debug(
+            f"Using {num_cores} cores for parallel multi-start registration"
+        )
+
+        results = {}
         for n in range(self._attempts):
             process = multiprocessing.Process(
-                target=self._worker, args=(n, source, target, result_queue)
+                target=self._worker, args=(n, source, target, results)
             )
             processes.append(process)
             process.start()
-            # TODO improve checks on processes
-            if len(processes) == num_cores:
-                # print('Joining processes')
-                for process in processes:
-                    # print('Joining process', process.pid)
-                    process.join()
-                # print('Processes joined')
-                processes = []
+
         for process in processes:
             process.join()
 
         # Collect results
-        while not result_queue.empty():
-            _, (
-                current_rotation,
-                initial_rotation,
-                initial_translation,
-                current_metric,
-            ) = result_queue.get()
-            # print(f'Process {_} finished with RMSE:', current_metric)
+        for _, result in results.items():
+            current_rotation, initial_rotation, initial_translation, current_metric = (
+                result
+            )
 
             if current_metric < metric:
                 metric = current_metric
@@ -311,17 +309,17 @@ class Aligner:
             source, target
         )
         # optimal_transformation, optimal_metric = self._parallel_multistart_registration(source, target)
-        print("Multistart registration time:", time.time() - start)
+        self._LOG.info(f"Multistart registration time: {time.time() - start}")
 
         # INITIALIZE ERRORS LIST
         errors = [optimal_metric]
-        print("rmse star", optimal_metric)
+        self._LOG.info(f"Initial RMSE: {optimal_metric}")
         directions = np.eye(3)
 
         while self._delta >= self._eps and iteration <= self._max_iter:
             # UPDATE ITERATION COUNTER
             iteration += 1
-            print("Iteration number:", iteration, "Current step:", self._delta)
+            self._LOG.info(f"Iteration number: {iteration} Current step: {self._delta}")
             for axis in range(3):
                 scale_plus = self._delta * directions[:, axis]
                 new_scale_factors, new_rotation, new_metric = self.compass_step(
@@ -329,7 +327,7 @@ class Aligner:
                 )
 
                 if new_metric <= optimal_metric:
-                    print("New RMSE:", new_metric, "Old RMSE:", optimal_metric)
+                    self._LOG.info(f"New RMSE: {new_metric} Old RMSE: {optimal_metric}")
                     optimal_metric = new_metric
                     optimal_transformation = new_rotation
                     optimal_scale_factors = scale_plus
@@ -343,7 +341,7 @@ class Aligner:
                 )
 
                 if new_metric <= optimal_metric:
-                    print("New RMSE:", new_metric, "Old RMSE:", optimal_metric)
+                    self._LOG.info(f"New RMSE: {new_metric} Old RMSE: {optimal_metric}")
                     optimal_metric = new_metric
                     optimal_transformation = new_rotation
                     optimal_scale_factors = scale_neg
@@ -353,7 +351,7 @@ class Aligner:
             # UPDATE DELTA
             if new_metric > optimal_metric:
                 self._delta = self._delta / 2
-                print("Delta updated:", self._delta)
+                self._LOG.info(f"No improvement, decreasing step size to {self._delta}")
 
         return optimal_transformation, optimal_metric, errors
 

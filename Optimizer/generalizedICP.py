@@ -57,11 +57,11 @@ class GeneralizedICP(IOptimizer):
             o3d.pipelines.registration.registration_generalized_icp(
                 source_point_cloud,
                 target_point_cloud,
-                self.max_correspondence_distance,
+                self._max_correspondence_distance,
                 np.eye(4),
                 icp_type,
                 o3d.pipelines.registration.ICPConvergenceCriteria(
-                    max_iteration=self.max_iterations
+                    max_iteration=self._max_iterations
                 ),
             )
         )
