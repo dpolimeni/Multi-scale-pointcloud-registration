@@ -7,7 +7,9 @@ from pathlib import Path
 __TIME_NOW__ = time.time()
 
 # TIMESTAMP EXPRESSED IN HUMAN READABLE FORMAT
-__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime("%Y_%m_%d_%H_%M_%S")
+__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime(
+    "%Y_%m_%d_%H_%M_%S"
+)
 
 # PROJECT ROOT
 __ROOT__ = str(Path(os.getcwd()).parent)
@@ -28,3 +30,14 @@ __EPS__ = 0.001
 
 # DOWNSAMPLER DEFAULT SAMPLE SIZE
 __SAMPLE_SIZE__ = 4096
+
+# FAST GLOBAL OPTIMIZER
+__DIVISION_FACTOR__ = 1.4
+__TUPLE_SCALE__ = 0.95
+__MAXIMUM_CORRESPONDENCE_DISTANCE__ = 0.05
+__ITERATION_NUMBER__ = 100
+__DECREASE_MU__ = True
+__NORMAL_ESTIMATE_RADIUS__ = 0.05
+__NORMAL_ESTIMATE_KNN__ = 20
+__FPFH_RADIUS__ = 0.05
+__FPFH_KNN__ = 20
