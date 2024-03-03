@@ -104,6 +104,8 @@ class FastGlobalOptimizer(IOptimizer):
         else:
             self._normal_estimate_knn = normal_estimate_knn
 
+        self._LOG.debug(msg=f"initialized optimizer: {self}")
+
     def get_fpfh_features(
         self,
         source_point_cloud: o3d.geometry.PointCloud,
@@ -172,3 +174,19 @@ class FastGlobalOptimizer(IOptimizer):
         )
 
         return optimization_result.transformation, optimization_result.inlier_rmse
+
+    def __repr__(self):
+        return f"""{self.__class__.__name__}
+            (division_factor={self._division_factor},
+            tuple_scale={self._tuple_scale},
+            maximum_correspondence_distance={self._maximum_correspondence_distance},
+            iteration_number={self._iteration_number},
+            decrease_mu={self._decrease_mu},
+            normal_estimate_radius={self._normal_estimate_radius},
+            normal_estimate_knn={self._normal_estimate_knn},
+            fpfh_radius={self._fpfh_radius},
+            fpfh_knn={self._fpfh_knn})"
+        """
+
+
+a = FastGlobalOptimizer()
