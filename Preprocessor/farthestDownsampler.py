@@ -7,7 +7,7 @@ from utils.logger_factory import LoggerFactory
 
 
 class FarthestDownsampler(IProcessBlock):
-    def __init__(self, sample_size: int):
+    def __init__(self, sample_size: int = __SAMPLE_SIZE__):
         """
         :param sample_size: size of the down-sampled cloud
         """

@@ -5,7 +5,7 @@ from utils.constants import __SAMPLE_SIZE__
 from utils.logger_factory import LoggerFactory
 
 class RandomDownsampler(IProcessBlock):
-    def __init__(self, sample_size: int, replace: bool = False):
+    def __init__(self, sample_size: int = __SAMPLE_SIZE__, replace: bool = False):
         """
         :param sample_size: the number of points to keep from the cloud
         :param replace: choose to sample with or without replacement
