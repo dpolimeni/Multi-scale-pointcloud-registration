@@ -6,6 +6,7 @@ import open3d as o3d
 import yaml
 
 from Aligner.Aligner import Aligner
+from Optimizer.fastGlobalOptimizer import FastGlobalOptimizer
 from Optimizer.generalizedICP import GeneralizedICP
 from Preprocessor.farthestDownsampler import FarthestDownsampler
 from Preprocessor.preprocessor import Preprocessor

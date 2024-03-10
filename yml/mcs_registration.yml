@@ -1,7 +1,7 @@
 ################FILEPATH FOR EXPANDED source AND target CLOUD (.npz)
 
 source_path: "data/ArmadilloBack_330.ply" #Loading
-target_path: "data/ArmadilloBack_330.ply" #Loading
+target_path: "data/ArmadilloBack_0.ply" #Loading
 
 source_path_out: "output/Aligned_source.npz"   #Saving
 target_path_out: "output/Aligned_target.npz" #Saving

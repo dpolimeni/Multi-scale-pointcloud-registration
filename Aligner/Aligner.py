@@ -1,14 +1,16 @@
 import copy
 import multiprocessing
 import time
-from typing import List, Dict
+from typing import List
 from typing import Tuple
+import open3d as o3d
 
 import numpy as np
 
 from Optimizer.generalizedICP import GeneralizedICP
 from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
+from utils.create_cloud import create_cloud
 from utils.logger_factory import LoggerFactory
 from utils.constants import (
     __ALIGNER_ATTEMPTS__,
@@ -302,7 +304,7 @@ class Aligner:
         return new_scale_factors, current_rotation, current_metric
 
     def align(
-        self, source: np.ndarray, target: np.ndarray
+        self, source: np.ndarray, target: np.ndarray, refine_registration: bool = True, icp_type: str = "PointToPlane"
     ) -> Tuple[np.ndarray, float, List[float]]:
         source = self._source_preprocessor.preprocess(source)
         target = self._target_preprocessor.preprocess(target)
@@ -361,7 +363,55 @@ class Aligner:
                 self._delta = self._delta / 2
                 self._LOG.info(f"No improvement, decreasing step size to {self._delta}")
 
+        if refine_registration:
+            optimal_transformation, optimal_metric = self.refine_registration(
+                source=source,
+                target=target,
+                initial_transform=optimal_transformation
+            )
+            errors.append(optimal_metric)
+
         return optimal_transformation, optimal_metric, errors
+
+    def refine_registration(
+            self,
+            source: np.ndarray,
+            target: np.ndarray,
+            initial_transform: np.ndarray,
+            max_iteration: int=100,
+            distance_threshold: float =0.1,
+            icp_type: str = "PointToPoint",
+    ) -> (np.ndarray, float):
+        if icp_type == "PointToPoint":
+            icp_type = (
+                o3d.pipelines.registration.TransformationEstimationPointToPoint()
+            )  # for faster convergence
+        if icp_type == "PointToPlane":
+            icp_type = o3d.pipelines.registration.TransformationEstimationPointToPlane()
+        # Define convergence criterion
+        convergence_rule = o3d.pipelines.registration.ICPConvergenceCriteria(
+            max_iteration=max_iteration
+        )
+
+        source_cloud = create_cloud(points=source)
+        target_cloud = create_cloud(points=target)
+
+        # Execute ICP
+        result = o3d.pipelines.registration.registration_icp(
+            source_cloud,
+            target_cloud,
+            distance_threshold,
+            initial_transform,
+            icp_type,
+            convergence_rule,
+        )
+
+        T_refined = result.transformation
+        T = np.copy(T_refined)
+        T[:3, :3] = T_refined[:3, :3].T
+        T[:3, 3] = -np.dot(T_refined[:3, 3], T_refined[:3, :3])
+
+        return T, result.inlier_rmse
 
     def __repr__(self):
         return f"""{self.__class__.__name__}
