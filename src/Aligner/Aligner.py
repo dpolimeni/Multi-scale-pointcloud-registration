@@ -7,9 +7,9 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from Optimizer.iOptimizer import IOptimizer
-from Preprocessor.preprocessor import Preprocessor
-from utils.constants import (
+from src.Optimizer.iOptimizer import IOptimizer
+from src.Preprocessor.preprocessor import Preprocessor
+from src.utils.constants import (
     __ALIGNER_ATTEMPTS__,
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
@@ -18,8 +18,8 @@ from utils.constants import (
     __ALIGNER_DELTA__,
     __ALIGNER_EPSILON__,
 )
-from utils.create_cloud import create_cloud
-from utils.logger_factory import LoggerFactory
+from src.utils.create_cloud import create_cloud
+from src.utils.logger_factory import LoggerFactory
 
 
 class Aligner:

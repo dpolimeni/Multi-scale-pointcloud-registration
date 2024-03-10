@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from Preprocessor.iProcessBlock import IProcessBlock
+from src.Preprocessor.iProcessBlock import IProcessBlock
 
 
 class Preprocessor:

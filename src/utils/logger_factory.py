@@ -4,7 +4,7 @@ import os
 import sys
 from logging import Logger, FileHandler, Formatter, StreamHandler
 
-from utils.constants import __LOG_FOLDER__, __DEFAULT_LOG_FORMAT__
+from src.utils.constants import __LOG_FOLDER__, __DEFAULT_LOG_FORMAT__
 
 
 class LoggerFactory:

@@ -1,8 +1,8 @@
 import numpy as np
 
-from Preprocessor.iProcessBlock import IProcessBlock
-from utils.constants import __SAMPLE_SIZE__
-from utils.logger_factory import LoggerFactory
+from src.Preprocessor.iProcessBlock import IProcessBlock
+from src.utils.constants import __SAMPLE_SIZE__
+from src.utils.logger_factory import LoggerFactory
 
 
 class RandomDownsampler(IProcessBlock):

@@ -13,8 +13,7 @@ from datetime import datetime
 
 import yaml
 
-sys.path.append("../")
-from utils.util_mcs_registration import *
+sys.path.append("../../")
 
 if __name__ == "__main__":
 

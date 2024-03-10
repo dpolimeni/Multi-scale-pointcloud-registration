@@ -5,13 +5,13 @@ import numpy as np
 import open3d as o3d
 import yaml
 
-from Aligner.Aligner import Aligner
-from Optimizer.generalizedICP import GeneralizedICP
-from Preprocessor.farthestDownsampler import FarthestDownsampler
-from Preprocessor.preprocessor import Preprocessor
-from Preprocessor.randomDownsampler import RandomDownsampler
-from Preprocessor.voxelDownsampler import VoxelDownsampler
-from Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
+from src.Aligner.Aligner import Aligner
+from src.Optimizer.generalizedICP import GeneralizedICP
+from src.Preprocessor.farthestDownsampler import FarthestDownsampler
+from src.Preprocessor.preprocessor import Preprocessor
+from src.Preprocessor.randomDownsampler import RandomDownsampler
+from src.Preprocessor.voxelDownsampler import VoxelDownsampler
+from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
 
 
 def main():
