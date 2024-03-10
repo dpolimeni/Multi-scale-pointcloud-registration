@@ -178,7 +178,7 @@ def generate_initialization_matrix(deg=0.2, mu=0, std=0.1):
 
 # Inputs: o3d clouds, fpfh features, scalars
 def execute_fast_global_registration(
-        source, target, source_fpfh, target_fpfh, tuple_scale=0.55, distance_threshold=0.5
+    source, target, source_fpfh, target_fpfh, tuple_scale=0.55, distance_threshold=0.5
 ):
     option = o3d.pipelines.registration.FastGlobalRegistrationOption(
         division_factor=1.4,
@@ -199,7 +199,7 @@ def execute_fast_global_registration(
 
 
 def execute_generalized_icp_registration(
-        source, target, max_iterations=100, distance_threshold=0.8
+    source, target, max_iterations=100, distance_threshold=0.8
 ):
     icp_type = o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()
 
@@ -219,14 +219,14 @@ def execute_generalized_icp_registration(
 
 
 def execute_multistart_registration(
-        source,
-        target,
-        source_fpfh,
-        target_fpfh,
-        n_attempts=1,
-        tuple_scale=0.9,
-        distance_threshold=0.8,
-        reg_type="fgr",
+    source,
+    target,
+    source_fpfh,
+    target_fpfh,
+    n_attempts=1,
+    tuple_scale=0.9,
+    distance_threshold=0.8,
+    reg_type="fgr",
 ):
     # Number of iterations for the multistart
     n_attempts = n_attempts
@@ -263,8 +263,8 @@ def execute_multistart_registration(
             T = np.eye(4)
             T[:3, :3] = np.dot(result.transformation[:3, :3], mat_init[:3, :3])
             T[:3, 3] = (
-                    np.dot(result.transformation[:3, :3], mat_init[:3, 3]).ravel()
-                    + result.transformation[:3, 3]
+                np.dot(result.transformation[:3, :3], mat_init[:3, 3]).ravel()
+                + result.transformation[:3, 3]
             )
             best_T = T
 
@@ -275,15 +275,15 @@ def execute_multistart_registration(
 
 
 def compass_search(
-        source,
-        target,
-        source_fpfh,
-        target_fpfh,
-        n_attempts,
-        delta,
-        eps,
-        max_iter,
-        reg_type="fgr",
+    source,
+    target,
+    source_fpfh,
+    target_fpfh,
+    n_attempts,
+    delta,
+    eps,
+    max_iter,
+    reg_type="fgr",
 ):
     # INITIALIZE COUNTER
     it = 0
@@ -379,12 +379,12 @@ def compass_search(
 
 
 def refine_registration(
-        source,
-        target,
-        initial_transform,
-        max_iteration=100,
-        distance_threshold=0.1,
-        icp_type="PointToPoint",
+    source,
+    target,
+    initial_transform,
+    max_iteration=100,
+    distance_threshold=0.1,
+    icp_type="PointToPoint",
 ):
     if icp_type == "PointToPoint":
         icp_type = (

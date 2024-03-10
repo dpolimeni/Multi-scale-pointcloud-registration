@@ -17,16 +17,15 @@ class LoggerFactory:
 
     @staticmethod
     def get_logger(
-            log_name: str = None,
-            log_on_file: bool = False,
-            file_name: str = None,
-            folder_name: str = None,
-            log_file_format: str = None,
-            log_console_format: str = None,
-            file_handler_level: int = logging.DEBUG,
-            console_handler_level: int = logging.DEBUG
+        log_name: str = None,
+        log_on_file: bool = False,
+        file_name: str = None,
+        folder_name: str = None,
+        log_file_format: str = None,
+        log_console_format: str = None,
+        file_handler_level: int = logging.DEBUG,
+        console_handler_level: int = logging.DEBUG,
     ) -> Logger:
-
         """
         Creates customized logger
 
@@ -41,9 +40,11 @@ class LoggerFactory:
         """
 
         # GET LOGGER NAME (USE CALLER FILE IF NOT PROVIDED)
-        _log_name = log_name \
-            if log_name is not None \
+        _log_name = (
+            log_name
+            if log_name is not None
             else os.path.splitext(os.path.basename(inspect.stack()[1].filename))[0]
+        )
 
         # INITIALIZE LOGGER
         logger = logging.getLogger(name=_log_name)
@@ -68,7 +69,11 @@ class LoggerFactory:
             file_handler.setLevel(level=file_handler_level)
 
             # CREATE AND SET FORMATTER FOR FILE HANDLER
-            _log_file_format = log_file_format if log_file_format is not None else __DEFAULT_LOG_FORMAT__
+            _log_file_format = (
+                log_file_format
+                if log_file_format is not None
+                else __DEFAULT_LOG_FORMAT__
+            )
             file_handler.setFormatter(fmt=Formatter(fmt=_log_file_format))
 
             # ADD FILE HANDLER TO LOGGER
@@ -82,7 +87,11 @@ class LoggerFactory:
         console_handler.setLevel(level=console_handler_level)
 
         # CREATE AND SET FORMATTER FOR STREAM HANDLER
-        _log_console_format = log_console_format if log_console_format is not None else __DEFAULT_LOG_FORMAT__
+        _log_console_format = (
+            log_console_format
+            if log_console_format is not None
+            else __DEFAULT_LOG_FORMAT__
+        )
         console_handler.setFormatter(fmt=Formatter(fmt=_log_console_format))
 
         # ADD CONSOLE HANDLER TO LOGGER

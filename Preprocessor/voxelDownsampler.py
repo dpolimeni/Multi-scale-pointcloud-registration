@@ -13,14 +13,13 @@ class VoxelDownsampler(IProcessBlock):
     """
 
     def __init__(
-            self,
-            target_points: int,
-            base_voxel_size: float = __BASE_VOXEL_SIZE__,
-            min_voxel_size: float = __MIN_VOXEL_SIZE__,
-            delta: float = __DELTA__,
-            eps: float = __EPS__,
+        self,
+        target_points: int,
+        base_voxel_size: float = __BASE_VOXEL_SIZE__,
+        min_voxel_size: float = __MIN_VOXEL_SIZE__,
+        delta: float = __DELTA__,
+        eps: float = __EPS__,
     ):
-
         """
         :param target_points: desired number of points after down sampling
         :param base_voxel_size:
@@ -29,7 +28,9 @@ class VoxelDownsampler(IProcessBlock):
         :param eps:
         """
 
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
 
         if target_points <= 0:
             msg = f"target points cannot be 0 or less. Provided: {target_points}"
@@ -51,14 +52,14 @@ class VoxelDownsampler(IProcessBlock):
             self._base_voxel_size = __BASE_VOXEL_SIZE__
         else:
             self._base_voxel_size = base_voxel_size
-            
+
         if delta <= 0:
             msg = f"delta cannot be 0 or less. Provided: {delta}. Using default value: {__DELTA__}"
             self._LOG.warning(msg)
             self._delta = __DELTA__
         else:
             self._delta = delta
-            
+
         if eps <= 0:
             msg = f"eps cannot be 0 or less. Provided: {eps}. Using default value: {__EPS__}"
             self._LOG.warning(msg)
@@ -69,7 +70,7 @@ class VoxelDownsampler(IProcessBlock):
         self._LOG.debug(msg=f"initialized downsampler: {self}")
 
     def compass_step(
-            self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
+        self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
     ):
         new_voxel_size = current_voxel_size + delta
         if new_voxel_size <= self._min_voxel_size:
@@ -124,4 +125,3 @@ class VoxelDownsampler(IProcessBlock):
             f"delta={self._delta}, "
             f"eps={self._eps})"
         )
-

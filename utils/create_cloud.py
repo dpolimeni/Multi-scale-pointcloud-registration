@@ -1,6 +1,7 @@
 import numpy as np
 import open3d as o3d
 
+
 def create_cloud(points: np.ndarray) -> o3d.geometry.PointCloud:
     """
     Shortcut to create an open3d point cloud from a numpy array

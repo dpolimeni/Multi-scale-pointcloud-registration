@@ -5,7 +5,6 @@ import numpy as np
 import open3d as o3d
 
 from Optimizer.iOptimizer import IOptimizer
-from utils.logger_factory import LoggerFactory
 from utils.constants import (
     __DIVISION_FACTOR__,
     __TUPLE_SCALE__,
@@ -17,6 +16,7 @@ from utils.constants import (
     __NORMAL_ESTIMATE_RADIUS__,
     __NORMAL_ESTIMATE_KNN__,
 )
+from utils.logger_factory import LoggerFactory
 
 
 class FastGlobalOptimizer(IOptimizer):

@@ -4,8 +4,8 @@ import numpy as np
 import open3d as o3d
 
 from Optimizer.iOptimizer import IOptimizer
-from utils.logger_factory import LoggerFactory
 from utils.constants import __MAX_CORRESPONDENCE_DISTANCE__, __MAX_ITERATIONS__
+from utils.logger_factory import LoggerFactory
 
 
 class GeneralizedICP(IOptimizer):

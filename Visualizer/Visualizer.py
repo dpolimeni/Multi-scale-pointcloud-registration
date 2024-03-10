@@ -1,7 +1,8 @@
 import copy
-import open3d as o3d
-import numpy as np
 from typing import Iterable, Tuple
+
+import numpy as np
+import open3d as o3d
 
 
 class Visualizer:

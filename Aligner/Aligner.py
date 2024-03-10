@@ -3,15 +3,12 @@ import multiprocessing
 import time
 from typing import List
 from typing import Tuple
-import open3d as o3d
 
 import numpy as np
+import open3d as o3d
 
-from Optimizer.generalizedICP import GeneralizedICP
 from Optimizer.iOptimizer import IOptimizer
 from Preprocessor.preprocessor import Preprocessor
-from utils.create_cloud import create_cloud
-from utils.logger_factory import LoggerFactory
 from utils.constants import (
     __ALIGNER_ATTEMPTS__,
     __ALIGNER_DEG__,
@@ -21,6 +18,8 @@ from utils.constants import (
     __ALIGNER_DELTA__,
     __ALIGNER_EPSILON__,
 )
+from utils.create_cloud import create_cloud
+from utils.logger_factory import LoggerFactory
 
 
 class Aligner:
@@ -304,7 +303,11 @@ class Aligner:
         return new_scale_factors, current_rotation, current_metric
 
     def align(
-        self, source: np.ndarray, target: np.ndarray, refine_registration: bool = True, icp_type: str = "PointToPlane"
+        self,
+        source: np.ndarray,
+        target: np.ndarray,
+        refine_registration: bool = True,
+        icp_type: str = "PointToPlane",
     ) -> Tuple[np.ndarray, float, List[float]]:
         source = self._source_preprocessor.preprocess(source)
         target = self._target_preprocessor.preprocess(target)
@@ -365,22 +368,20 @@ class Aligner:
 
         if refine_registration:
             optimal_transformation, optimal_metric = self.refine_registration(
-                source=source,
-                target=target,
-                initial_transform=optimal_transformation
+                source=source, target=target, initial_transform=optimal_transformation
             )
             errors.append(optimal_metric)
 
         return optimal_transformation, optimal_metric, errors
 
     def refine_registration(
-            self,
-            source: np.ndarray,
-            target: np.ndarray,
-            initial_transform: np.ndarray,
-            max_iteration: int=100,
-            distance_threshold: float =0.1,
-            icp_type: str = "PointToPoint",
+        self,
+        source: np.ndarray,
+        target: np.ndarray,
+        initial_transform: np.ndarray,
+        max_iteration: int = 100,
+        distance_threshold: float = 0.1,
+        icp_type: str = "PointToPoint",
     ) -> (np.ndarray, float):
         if icp_type == "PointToPoint":
             icp_type = (
