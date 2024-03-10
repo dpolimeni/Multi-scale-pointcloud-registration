@@ -172,7 +172,7 @@ class Aligner:
             )
 
             # Perform registration
-            current_rotation, current_metric = self._optimizer.optimize(
+            current_transform, current_metric = self._optimizer.optimize(
                 source_initialized, target
             )
 
@@ -181,10 +181,10 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
+                T[:3, :3] = np.dot(current_transform[:3, :3].T, initial_rotation)
                 T[:3, 3] = (
-                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                    + initial_translation
+                    np.dot(current_transform[:3, :3], initial_translation).ravel()
+                    + current_transform[:3, 3]
                 )
                 best_transformation = T
 

@@ -11,6 +11,7 @@ from Preprocessor.farthestDownsampler import FarthestDownsampler
 from Preprocessor.preprocessor import Preprocessor
 from Preprocessor.randomDownsampler import RandomDownsampler
 from Preprocessor.voxelDownsampler import VoxelDownsampler
+from Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
 
 
 def main():
@@ -122,6 +123,9 @@ def main():
         f"Optimal transformation: \n{optimal_transformation}\nOptimal metric: {optimal_metric}\nErrors: {errors}"
     )
     print(f"Elapsed time: {time.time() - start}")
+
+    visualize_point_clouds([source_array, target_array], [(0, 0, 1), (1, 0, 0)])
+    draw_registration_result(source, target, optimal_transformation)
 
 
 if __name__ == "__main__":
