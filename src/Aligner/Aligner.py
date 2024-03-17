@@ -9,14 +9,15 @@ import open3d as o3d
 
 from src.Optimizer.iOptimizer import IOptimizer
 from src.Preprocessor.preprocessor import Preprocessor
+from src.Visualizer.Visualizer import visualize_point_clouds
 from src.utils.constants import (
-    __ALIGNER_ATTEMPTS__,
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
     __ALIGNER_STD__,
     __ALIGNER_MAX_ITER__,
     __ALIGNER_DELTA__,
     __ALIGNER_EPSILON__,
+    __MULTISTART_ATTEMPTS__,
 )
 from src.utils.create_cloud import create_cloud
 from src.utils.logger_factory import LoggerFactory
@@ -28,7 +29,7 @@ class Aligner:
         source_preprocessor: Preprocessor,
         target_preprocessor: Preprocessor,
         optimizer: IOptimizer,
-        attempts: int = __ALIGNER_ATTEMPTS__,
+        attempts: int = __MULTISTART_ATTEMPTS__,
         deg: float = __ALIGNER_DEG__,
         mu: float = __ALIGNER_MU__,
         std: float = __ALIGNER_STD__,
@@ -58,7 +59,7 @@ class Aligner:
         if attempts <= 0:
             msg = f"attempts cannot be 0 or less. Provided: {attempts}"
             self._LOG.warning(msg)
-            self._attempts = __ALIGNER_ATTEMPTS__
+            self._attempts = __MULTISTART_ATTEMPTS__
         else:
             self._attempts = attempts
 
@@ -220,62 +221,6 @@ class Aligner:
         results.put((n, result))
         self._LOG.debug(f"Process finished with RMSE: {current_metric}")
 
-    def parallel_multistart_registration(
-        self, source: np.ndarray, target: np.ndarray
-    ) -> Tuple[np.ndarray, float]:
-        """Perform multi-start registration on the source and target point clouds.
-        :param source: Source point cloud
-        :param target: Target point cloud
-
-        :return: (best_transformation, metric): (best transformation matrix, best metric)
-        """
-
-        # Initial metric and transformation
-        metric = np.inf
-        best_transformation = np.eye(4)
-
-        processes = []
-        result_queue = multiprocessing.Queue()
-        num_cores = multiprocessing.cpu_count()
-        self._LOG.debug(
-            f"Using {num_cores} cores for parallel multi-start registration"
-        )
-
-        results = {}
-        for n in range(self._attempts):
-            source_copy = copy.deepcopy(source)
-            process = multiprocessing.Process(
-                target=self._worker, args=(n, source_copy, target, result_queue)
-            )
-            processes.append(process)
-            process.start()
-
-        for process in processes:
-            process.join()
-
-        # Collect results
-        while not result_queue.empty():
-
-            _, result = result_queue.get()
-            current_rotation, initial_rotation, initial_translation, current_metric = (
-                result
-            )
-
-            if current_metric < metric:
-                metric = current_metric
-                T = np.eye(4)
-                T[:3, :3] = np.dot(current_rotation[:3, :3], initial_rotation)
-                T[:3, 3] = (
-                    np.dot(current_rotation[:3, :3], initial_translation).ravel()
-                    + initial_translation
-                )
-                best_transformation = T
-
-        self._LOG.debug(
-            f"Parallel multi-start registration finished with RMSE: {metric}"
-        )
-        return best_transformation, metric
-
     def compass_step(
         self,
         source: np.ndarray,
@@ -312,6 +257,8 @@ class Aligner:
         source = self._source_preprocessor.preprocess(source)
         target = self._target_preprocessor.preprocess(target)
         iteration = 0
+
+        visualize_point_clouds([source, target], [(0, 0, 1), (1, 0, 0)])
 
         optimal_scale_factors = np.ones((1, 3))
 
@@ -409,7 +356,7 @@ class Aligner:
 
         T_refined = result.transformation
         T = np.copy(T_refined)
-        T[:3, :3] = T_refined[:3, :3].T
+        T[:3, :3] = T_refined[:3, :3]
         T[:3, 3] = -np.dot(T_refined[:3, 3], T_refined[:3, :3])
 
         return T, result.inlier_rmse

@@ -266,7 +266,7 @@ if __name__ == "__main__":
         delta=compass_delta,
         eps=compass_eps,
         max_iter=compass_max_iter,
-        reg_type=reg_type,
+        reg_type="gicp",
     )
 
     print("time requested:", (time.time() - start) / 60, "minutes")

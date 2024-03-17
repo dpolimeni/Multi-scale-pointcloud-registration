@@ -14,11 +14,20 @@ from src.Preprocessor.scaler import Scaler
 from src.Preprocessor.voxelDownsampler import VoxelDownsampler
 from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
 from src.utils.create_cloud import create_cloud
+from src.utils.constants import (
+    __FARTHEST_SAMPLE_SIZE__,
+    __RANDOM_SAMPLE_SIZE__,
+    __VOXEL_SAMPLE_SIZE__,
+    __VOXEL_SAMPLE_SIZE__,
+    __BASE_VOXEL_SIZE__,
+    __MIN_VOXEL_SIZE__,
+    __DELTA__,
+    __EPS__,
+)
 
 
 def main():
     YAML_PATH = os.path.join(os.getcwd(), "yml", "mcs_registration.yml")
-    N_POINTS_RANDOM_DS = 15000
 
     with open(YAML_PATH, "r") as f:
         config_dict = yaml.safe_load(f)
@@ -86,18 +95,30 @@ def main():
 
     "PREPROCESSING"
     print("Preprocessing...", end="")
-    random_downsampler = RandomDownsampler(N_POINTS_RANDOM_DS)
-    fps_downsampler = FarthestDownsampler(N_POINTS_RANDOM_DS)
-    voxel_downsampler = VoxelDownsampler(
-        target_points_source, 0.05, 0.005, delta, stopping_delta
+    random_downsampler = RandomDownsampler(__RANDOM_SAMPLE_SIZE__)
+    fps_downsampler = FarthestDownsampler(__FARTHEST_SAMPLE_SIZE__)
+    source_voxel_downsampler = VoxelDownsampler(
+        __VOXEL_SAMPLE_SIZE__,
+        __BASE_VOXEL_SIZE__,
+        __MIN_VOXEL_SIZE__,
+        __DELTA__,
+        __EPS__,
+    )
+
+    target_voxel_downsampler = VoxelDownsampler(
+        __VOXEL_SAMPLE_SIZE__,
+        __BASE_VOXEL_SIZE__,
+        __MIN_VOXEL_SIZE__,
+        __DELTA__,
+        __EPS__,
     )
     scaler = Scaler()
 
     source_preprocessor = Preprocessor(
-        [random_downsampler],
+        [random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
     )
     target_preprocessor = Preprocessor(
-        [fps_downsampler, voxel_downsampler],
+        [random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
     # TODO remove magic numbers
@@ -118,11 +139,9 @@ def main():
         eps=compass_eps,
     )
     start = time.time()
-    source_array = scaler.process(source_array)
-    target_array = scaler.process(target_array)
 
-    optimal_transformation, optimal_metric, optimal_scale_factor, errors = aligner.align(
-        source_array, target_array
+    optimal_transformation, optimal_metric, optimal_scale_factor, errors = (
+        aligner.align(source_array, target_array)
     )
     print("done")
     print(
@@ -130,9 +149,14 @@ def main():
     )
     print(f"Elapsed time: {time.time() - start}")
 
-    visualize_point_clouds([source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)])
-    source = create_cloud(source_array)
-    target = create_cloud(target_array * optimal_scale_factor)
+    visualize_point_clouds(
+        [source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)]
+    )
+    source_processed = source_preprocessor.preprocess(source_array)
+    target_processed = target_preprocessor.preprocess(target_array)
+    source = create_cloud(source_processed)
+    target = create_cloud(target_processed * optimal_scale_factor)
+
     draw_registration_result(source, target, optimal_transformation)
 
 

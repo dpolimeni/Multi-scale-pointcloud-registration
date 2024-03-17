@@ -104,7 +104,7 @@ def get_voxel_size(source, target_points, vs_0=0.02, delta=0.01, eps=0.001):
             continue
 
         delta = delta / 2
-
+    print("Voxel size:", voxel_size, "Number of points:", n_points)
     return voxel_size
 
 
