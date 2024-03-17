@@ -4,6 +4,8 @@ Created on Wed Jun 22 17:03:54 2022
 
 @author: Alessandro & Diego
 """
+from src.utils.util_mcs_registration import *
+import time
 
 "IMPORT LIBRARIES"
 import os
@@ -17,8 +19,8 @@ sys.path.append("../../")
 
 if __name__ == "__main__":
 
-    USER_DIR = os.path.dirname(os.getcwd())
-    YAML_PATH = USER_DIR + "/yml/mcs_registration.yml"
+    # USER_DIR = os.path.dirname(os.getcwd())
+    YAML_PATH = "/Users/dpolimeni/Desktop/projects/pointcloud_registration/Multi-scale-pointcloud-registration/yml/mcs_registration.yml"
     N_POINTS_RANDOM_DS = 15000
 
     with open(YAML_PATH, "r") as f:
@@ -66,6 +68,9 @@ if __name__ == "__main__":
     is_npz = config_dict["is_npz"]
 
     "LOAD CLOUDS"
+    data_path = os.path.dirname(os.getcwd())
+    source_path = os.path.join(data_path, source_path)
+    target_path = os.path.join(data_path, target_path)
     if is_npz:
         print("Loading Clouds...", end="")
         source = np.load(source_path, allow_pickle=True)
@@ -88,12 +93,12 @@ if __name__ == "__main__":
     "PERTURB CLOUD"
     n_points = int(n_points * target_array.shape[0])
     print(n_points, "of noise added")
-    target_array, R, t, initial_distortion = perturb_cloud(
-        target_array, deg=deg, mu=mu, std=std, n_points=n_points
-    )
-    print("Initial distortion: ", initial_distortion)
-    print("Initial rotation:", R)
-    print("Initial translation", t)
+    # target_array, R, t, initial_distortion = perturb_cloud(
+    #     target_array, deg=deg, mu=mu, std=std, n_points=n_points
+    # )
+    # print("Initial distortion: ", initial_distortion)
+    # print("Initial rotation:", R)
+    # print("Initial translation", t)
 
     "GET FIRST POINT FOR EVALUATION"
     first_source = source_array
@@ -296,20 +301,20 @@ if __name__ == "__main__":
     T = np.copy(T_refined)
     T[:3, :3] = T_refined[:3, :3].T
     T[:3, 3] = -np.dot(T_refined[:3, 3], T_refined[:3, :3])
-
+    print("Transformation matrix:", T)
     "VISUALIZE BEST ALIGNMENT"
     draw_registration_result(pcd_target_viz, pcd_source_viz, T)
     draw_registration_result(pcd_target_no_sor, pcd_source_no_sor, T)
 
-    evaluate_pipe(R, t, T_refined)
-    evaluate_distortion(first_source, first_target, coeff_star, T, dist_target_ds)
+    # evaluate_pipe(R, t, T_refined)
+    # evaluate_distortion(first_source, first_target, coeff_star, T, dist_target_ds)
 
-    path = r"C:/Users/dpolimeni/Desktop/paper_project/{}_{}".format(
-        reg_type, datetime.strftime(datetime.now(), "%Y-%m-%d-%H-%M")
-    )
-    with open(path, "w") as f:
-        for elem in errors:
-            f.write("\n" + str(elem))
+    # path = r"C:/Users/dpolimeni/Desktop/paper_project/{}_{}".format(
+    #     reg_type, datetime.strftime(datetime.now(), "%Y-%m-%d-%H-%M")
+    # )
+    # with open(path, "w") as f:
+    #     for elem in errors:
+    #         f.write("\n" + str(elem))
 
 # 'SAVE ALIGNED AND SCALED POINTCLOUDS AS NPZ FOR SEMANTIC SEGMENTATION'
 # pcd_target_no_sor.transform(T)
