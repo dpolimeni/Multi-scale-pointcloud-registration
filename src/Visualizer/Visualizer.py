@@ -25,8 +25,9 @@ def visualize_point_clouds(
 
     clouds = []
     for color_rgb, cloud_points in zip(colors_rgb, clouds_points):
+        cloud_copy = cloud_points.copy()
         cloud = o3d.geometry.PointCloud()
-        cloud.points = o3d.utility.Vector3dVector(cloud_points)
+        cloud.points = o3d.utility.Vector3dVector(cloud_copy)
         cloud.paint_uniform_color(color=color_rgb)
         clouds.append(cloud)
 

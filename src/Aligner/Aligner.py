@@ -9,7 +9,7 @@ import open3d as o3d
 
 from src.Optimizer.iOptimizer import IOptimizer
 from src.Preprocessor.preprocessor import Preprocessor
-from src.Visualizer.Visualizer import visualize_point_clouds
+from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
 from src.utils.constants import (
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
@@ -36,6 +36,7 @@ class Aligner:
         delta: float = __ALIGNER_DELTA__,
         max_iter: int = __ALIGNER_MAX_ITER__,
         eps: float = __ALIGNER_EPSILON__,
+        visualize_intermediate_steps: bool = False,
     ):
         """
         Wrapper function that takes the inner block optimizer, the preprocessors and runs a multi-start optimization on
@@ -105,6 +106,7 @@ class Aligner:
         else:
             self._eps = eps
 
+        self._visualize_intermediate_steps = visualize_intermediate_steps
         self._source_preprocessor = source_preprocessor
         self._target_preprocessor = target_preprocessor
         self._optimizer = optimizer
@@ -183,14 +185,14 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(current_transform[:3, :3].T, initial_rotation)
+                T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation)
                 T[:3, 3] = (
                     np.dot(current_transform[:3, :3], initial_translation).ravel()
                     + current_transform[:3, 3]
                 )
                 best_transformation = T
 
-        return best_transformation, metric
+        return best_transformation, metric  # best_transformation, metric
 
     def _worker(
         self,
@@ -241,10 +243,6 @@ class Aligner:
         current_rotation, current_metric = self.multistart_registration(
             source, target_scaled
         )
-        # current_rotation, current_metric = self.parallel_multistart_registration(
-        #     source, target_scaled
-        # )
-
         return new_scale_factors, current_rotation, current_metric
 
     def align(
@@ -258,7 +256,8 @@ class Aligner:
         target = self._target_preprocessor.preprocess(target)
         iteration = 0
 
-        visualize_point_clouds([source, target], [(0, 0, 1), (1, 0, 0)])
+        if self._visualize_intermediate_steps:
+            visualize_point_clouds([source, target], [(0, 0, 1), (1, 0, 0)])
 
         optimal_scale_factors = np.ones((1, 3))
 
@@ -266,9 +265,6 @@ class Aligner:
         optimal_transformation, optimal_metric = self.multistart_registration(
             source, target
         )
-        # optimal_transformation, optimal_metric = self.parallel_multistart_registration(
-        #     source, target
-        # )
         self._LOG.info(f"Multi-start registration time: {time.time() - start}")
 
         # INITIALIZE ERRORS LIST
@@ -303,7 +299,7 @@ class Aligner:
                 if new_metric <= optimal_metric:
                     self._LOG.info(f"New RMSE: {new_metric} Old RMSE: {optimal_metric}")
                     optimal_metric = new_metric
-                    optimal_transformation += new_rotation
+                    optimal_transformation = new_rotation
                     optimal_scale_factors += scale_neg
                     errors.append(new_metric)
                     break
@@ -312,6 +308,13 @@ class Aligner:
             if new_metric > optimal_metric:
                 self._delta = self._delta / 2
                 self._LOG.info(f"No improvement, decreasing step size to {self._delta}")
+
+        if self._visualize_intermediate_steps:
+            draw_registration_result(
+                create_cloud(source),
+                create_cloud(target * optimal_scale_factors),
+                optimal_transformation,
+            )
 
         if refine_registration:
             optimal_transformation, optimal_metric = self.refine_registration(
@@ -356,7 +359,7 @@ class Aligner:
 
         T_refined = result.transformation
         T = np.copy(T_refined)
-        T[:3, :3] = T_refined[:3, :3]
+        T[:3, :3] = T_refined[:3, :3].T
         T[:3, 3] = -np.dot(T_refined[:3, 3], T_refined[:3, :3])
 
         return T, result.inlier_rmse

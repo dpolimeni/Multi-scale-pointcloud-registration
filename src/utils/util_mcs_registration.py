@@ -405,6 +405,7 @@ def refine_registration(
         icp_type,
         convergence_rule,
     )
+    print("METRIC AFTER REFINEMENT:", result.inlier_rmse)
 
     return result.transformation
 

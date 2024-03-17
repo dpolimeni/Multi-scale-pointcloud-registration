@@ -284,7 +284,7 @@ if __name__ == "__main__":
     pcd_target_viz.points = o3d.utility.Vector3dVector(
         np.array(pcd_target_viz.points) * coeff_star
     )
-
+    draw_registration_result(pcd_target_viz, pcd_source_viz, T_star)
     "REFINE REGISTRATION"
     print("Refining registration...", end="")
     T_refined = refine_registration(

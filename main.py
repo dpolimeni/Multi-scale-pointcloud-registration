@@ -137,6 +137,7 @@ def main():
         std=std,
         delta=compass_delta,
         eps=compass_eps,
+        visualize_intermediate_steps=True,
     )
     start = time.time()
 
