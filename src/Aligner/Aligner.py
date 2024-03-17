@@ -308,7 +308,7 @@ class Aligner:
         target: np.ndarray,
         refine_registration: bool = True,
         icp_type: str = "PointToPlane",
-    ) -> Tuple[np.ndarray, float, List[float]]:
+    ) -> Tuple[np.ndarray, float, np.ndarray, List[float]]:
         source = self._source_preprocessor.preprocess(source)
         target = self._target_preprocessor.preprocess(target)
         iteration = 0
@@ -343,7 +343,7 @@ class Aligner:
                     self._LOG.info(f"New RMSE: {new_metric} Old RMSE: {optimal_metric}")
                     optimal_metric = new_metric
                     optimal_transformation = new_rotation
-                    optimal_scale_factors = scale_plus
+                    optimal_scale_factors += scale_plus
                     errors.append(new_metric)
                     break
 
@@ -356,8 +356,8 @@ class Aligner:
                 if new_metric <= optimal_metric:
                     self._LOG.info(f"New RMSE: {new_metric} Old RMSE: {optimal_metric}")
                     optimal_metric = new_metric
-                    optimal_transformation = new_rotation
-                    optimal_scale_factors = scale_neg
+                    optimal_transformation += new_rotation
+                    optimal_scale_factors += scale_neg
                     errors.append(new_metric)
                     break
             # TODO (ADD try/except?)
@@ -372,7 +372,7 @@ class Aligner:
             )
             errors.append(optimal_metric)
 
-        return optimal_transformation, optimal_metric, errors
+        return optimal_transformation, optimal_metric, optimal_scale_factors, errors
 
     def refine_registration(
         self,

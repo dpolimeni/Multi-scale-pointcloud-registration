@@ -10,8 +10,10 @@ from src.Optimizer.generalizedICP import GeneralizedICP
 from src.Preprocessor.farthestDownsampler import FarthestDownsampler
 from src.Preprocessor.preprocessor import Preprocessor
 from src.Preprocessor.randomDownsampler import RandomDownsampler
+from src.Preprocessor.scaler import Scaler
 from src.Preprocessor.voxelDownsampler import VoxelDownsampler
 from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
+from src.utils.create_cloud import create_cloud
 
 
 def main():
@@ -89,6 +91,7 @@ def main():
     voxel_downsampler = VoxelDownsampler(
         target_points_source, 0.05, 0.005, delta, stopping_delta
     )
+    scaler = Scaler()
 
     source_preprocessor = Preprocessor(
         [random_downsampler],
@@ -115,16 +118,21 @@ def main():
         eps=compass_eps,
     )
     start = time.time()
-    optimal_transformation, optimal_metric, errors = aligner.align(
+    source_array = scaler.process(source_array)
+    target_array = scaler.process(target_array)
+
+    optimal_transformation, optimal_metric, optimal_scale_factor, errors = aligner.align(
         source_array, target_array
     )
     print("done")
     print(
-        f"Optimal transformation: \n{optimal_transformation}\nOptimal metric: {optimal_metric}\nErrors: {errors}"
+        f"Optimal transformation: \n{optimal_transformation}\nOptimal metric: {optimal_metric}\nErrors: {errors}\nOptimal Scale Factors: {optimal_scale_factor}"
     )
     print(f"Elapsed time: {time.time() - start}")
 
-    visualize_point_clouds([source_array, target_array], [(0, 0, 1), (1, 0, 0)])
+    visualize_point_clouds([source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)])
+    source = create_cloud(source_array)
+    target = create_cloud(target_array * optimal_scale_factor)
     draw_registration_result(source, target, optimal_transformation)
 
 
