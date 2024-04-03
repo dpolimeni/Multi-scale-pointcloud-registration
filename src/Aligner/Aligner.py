@@ -18,6 +18,8 @@ from src.utils.constants import (
     __ALIGNER_DELTA__,
     __ALIGNER_EPSILON__,
     __MULTISTART_ATTEMPTS__,
+    __REFINER_MAX_ITER__,
+    __REFINER_DISTANCE_THRESHOLD__,
 )
 from src.utils.create_cloud import create_cloud
 from src.utils.logger_factory import LoggerFactory
@@ -329,8 +331,8 @@ class Aligner:
         source: np.ndarray,
         target: np.ndarray,
         initial_transform: np.ndarray,
-        max_iteration: int = 100,
-        distance_threshold: float = 0.1,
+        max_iteration: int = __REFINER_MAX_ITER__,
+        distance_threshold: float = __REFINER_DISTANCE_THRESHOLD__,
         icp_type: str = "PointToPoint",
     ) -> (np.ndarray, float):
         if icp_type == "PointToPoint":

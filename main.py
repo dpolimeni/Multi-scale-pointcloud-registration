@@ -36,41 +36,14 @@ def main():
     "READ mcs_registration.yml"
     source_path = config_dict["source_path"]
     target_path = config_dict["target_path"]
-    source_path_out = config_dict["source_path_out"]
-    target_path_out = config_dict["target_path_out"]
 
     deg = config_dict["deg"]
     mu = config_dict["mu"]
     std = config_dict["std"]
-    n_points = config_dict["n_points"]
-
-    clean_cloud = config_dict["clean_cloud"]
-    std_ratio = config_dict["std_ratio"]
-    nb_neighbors = config_dict["nb_neighbors"]
-
-    n_points_source_ds = config_dict["n_points_source_ds"]
-    n_points_target_ds = config_dict["n_points_target_ds"]
-
-    radius_normal = config_dict["radius_normal"]
-    radius_feature = config_dict["radius_feature"]
-
-    target_points_source = config_dict["target_points_source"]
-    target_points_target = config_dict["target_points_target"]
-    starting_voxel_size = config_dict["starting_voxel_size"]
-    delta = config_dict["delta"]
-    stopping_delta = config_dict["stopping_delta"]
 
     n_attempts = config_dict["n_attempts"]
     compass_delta = config_dict["compass_delta"]
     compass_eps = config_dict["compass_eps"]
-    compass_max_iter = config_dict["compass_max_iter"]
-
-    refinement_iterations = config_dict["refinement_iterations"]
-    refinement_distnace_threshold = config_dict["refinement_distnace_threshold"]
-    reg_type = config_dict["reg_type"]
-    icp_type = config_dict["icp_type"]
-
-    visualize_initial_alignment = config_dict["visualize_initial_alignment"]
     is_npz = config_dict["is_npz"]
 
     "LOAD CLOUDS"

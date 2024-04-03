@@ -231,6 +231,33 @@ if __name__ == "__main__":
     )
     print("done")
 
+    # PRINT ALL PARAMETERS
+    print("Parameters:")
+    print("deg:", deg)
+    print("mu:", mu)
+    print("std:", std)
+    print("n_points:", n_points)
+    print("clean_cloud:", clean_cloud)
+    print("std_ratio:", std_ratio)
+    print("nb_neighbors:", nb_neighbors)
+    print("n_points_source_ds:", n_points_source_ds)
+    print("n_points_target_ds:", n_points_target_ds)
+    print("radius_normal:", radius_normal)
+    print("radius_feature:", radius_feature)
+    print("target_points_source:", target_points_source)
+    print("target_points_target:", target_points_target)
+    print("starting_voxel_size:", starting_voxel_size)
+    print("delta:", delta)
+    print("stopping_delta:", stopping_delta)
+    print("n_attempts:", n_attempts)
+    print("compass_delta:", compass_delta)
+    print("compass_eps:", compass_eps)
+    print("compass_max_iter:", compass_max_iter)
+    print("refinement_iterations:", refinement_iterations)
+    print("refinement_distnace_threshold:", refinement_distnace_threshold)
+    print("reg_type:", reg_type)
+    print("icp_type:", icp_type)
+
     "PREPROCESS POINT CLOUD"
     print("Preprocessing point clouds...", end="")
     # Just for sake of visualization
