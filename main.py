@@ -18,15 +18,19 @@ from src.utils.constants import (
     __FARTHEST_SAMPLE_SIZE__,
     __RANDOM_SAMPLE_SIZE__,
     __VOXEL_SAMPLE_SIZE__,
-    __VOXEL_SAMPLE_SIZE__,
     __BASE_VOXEL_SIZE__,
     __MIN_VOXEL_SIZE__,
     __DELTA__,
     __EPS__,
+    __ALIGNER_DELTA__,
+    __ALIGNER_DEG__,
+    __ALIGNER_MU__,
+    __ALIGNER_STD__,
+    __MULTISTART_ATTEMPTS__,
 )
 
 
-def main():
+def main(__ALIGNER_EPS__=None):
     YAML_PATH = os.path.join(os.getcwd(), "yml", "mcs_registration.yml")
 
     with open(YAML_PATH, "r") as f:
@@ -36,14 +40,7 @@ def main():
     "READ mcs_registration.yml"
     source_path = config_dict["source_path"]
     target_path = config_dict["target_path"]
-
-    deg = config_dict["deg"]
-    mu = config_dict["mu"]
-    std = config_dict["std"]
-
     n_attempts = config_dict["n_attempts"]
-    compass_delta = config_dict["compass_delta"]
-    compass_eps = config_dict["compass_eps"]
     is_npz = config_dict["is_npz"]
 
     "LOAD CLOUDS"
@@ -104,12 +101,12 @@ def main():
         source_preprocessor,
         target_preprocessor,
         optimizer,
-        attempts=n_attempts,
-        deg=deg,
-        mu=mu,
-        std=std,
-        delta=compass_delta,
-        eps=compass_eps,
+        attempts=__MULTISTART_ATTEMPTS__,
+        deg=__ALIGNER_DEG__,
+        mu=__ALIGNER_MU__,
+        std=__ALIGNER_STD__,
+        delta=__ALIGNER_DELTA__,
+        eps=__ALIGNER_EPS__,
         visualize_intermediate_steps=True,
     )
     start = time.time()

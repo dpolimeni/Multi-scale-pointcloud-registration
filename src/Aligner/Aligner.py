@@ -196,35 +196,6 @@ class Aligner:
 
         return best_transformation, metric  # best_transformation, metric
 
-    def _worker(
-        self,
-        n: int,
-        source: np.ndarray,
-        target: np.ndarray,
-        results: multiprocessing.Queue,
-    ):
-        self._LOG.debug(f"Starting worker {n}")
-
-        # Generate random rotation and translation matrices
-        initial_rotation, initial_translation = self.initialize_rotation()
-        source_initialized = np.dot(source, initial_rotation) + initial_translation
-
-        # Perform registration
-        current_rotation, current_metric = self._optimizer.optimize(
-            source_initialized, target
-        )
-
-        # Prepare result
-        result = (
-            current_rotation,
-            initial_rotation,
-            initial_translation,
-            current_metric,
-        )
-        # Store result
-        results.put((n, result))
-        self._LOG.debug(f"Process finished with RMSE: {current_metric}")
-
     def compass_step(
         self,
         source: np.ndarray,
