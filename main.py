@@ -41,7 +41,6 @@ def main():
     "READ mcs_registration.yml"
     source_path = config_dict["source_path"]
     target_path = config_dict["target_path"]
-    n_attempts = config_dict["n_attempts"]
     is_npz = config_dict["is_npz"]
 
     "LOAD CLOUDS"
