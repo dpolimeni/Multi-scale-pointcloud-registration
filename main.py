@@ -120,9 +120,9 @@ def main():
     )
     print(f"Elapsed time: {time.time() - start}")
 
-    visualize_point_clouds(
-        [source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)]
-    )
+    # visualize_point_clouds(
+    #     [source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)]
+    # )
     source_processed = source_preprocessor.preprocess(source_array)
     target_processed = target_preprocessor.preprocess(target_array)
     source = create_cloud(source_processed)

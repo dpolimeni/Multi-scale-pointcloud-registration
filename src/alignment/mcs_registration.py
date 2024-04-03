@@ -231,39 +231,19 @@ if __name__ == "__main__":
     )
     print("done")
 
-    # PRINT ALL PARAMETERS
-    print("Parameters:")
-    print("deg:", deg)
-    print("mu:", mu)
-    print("std:", std)
-    print("n_points:", n_points)
-    print("clean_cloud:", clean_cloud)
-    print("std_ratio:", std_ratio)
-    print("nb_neighbors:", nb_neighbors)
-    print("n_points_source_ds:", n_points_source_ds)
-    print("n_points_target_ds:", n_points_target_ds)
-    print("radius_normal:", radius_normal)
-    print("radius_feature:", radius_feature)
-    print("target_points_source:", target_points_source)
-    print("target_points_target:", target_points_target)
-    print("starting_voxel_size:", starting_voxel_size)
-    print("delta:", delta)
-    print("stopping_delta:", stopping_delta)
-    print("n_attempts:", n_attempts)
-    print("compass_delta:", compass_delta)
-    print("compass_eps:", compass_eps)
-    print("compass_max_iter:", compass_max_iter)
-    print("refinement_iterations:", refinement_iterations)
-    print("refinement_distnace_threshold:", refinement_distnace_threshold)
-    print("reg_type:", reg_type)
-    print("icp_type:", icp_type)
-
     "PREPROCESS POINT CLOUD"
     print("Preprocessing point clouds...", end="")
     # Just for sake of visualization
     pcd_source_viz = copy.deepcopy(pcd_source_ds)
+    print("DEEPCOPY OF SOURCE")
     pcd_target_viz = copy.deepcopy(pcd_target_ds)
     # Subsampling + normal estimation + fpfh
+    print(
+        "SOURCE VOXEL DOWNSAMPLED + FPFH",
+        radius_normal,
+        radius_feature,
+        voxel_size_source,
+    )
     pcd_source_ds, pcd_source_ds_fpfh = preprocess_point_cloud(
         pcd_source_ds,
         radius_normal=radius_normal,
@@ -284,6 +264,14 @@ if __name__ == "__main__":
     "RUN COMPASS SEARCH"
     print("Compass Search Started")
     start = time.time()
+    print(
+        "COMPASS SEARCH",
+        n_attempts,
+        compass_delta,
+        compass_eps,
+        compass_max_iter,
+        reg_type,
+    )
     T_star, coeff_star, rmse_star, errors = compass_search(
         pcd_source_ds,
         pcd_target_ds,
@@ -314,6 +302,13 @@ if __name__ == "__main__":
     draw_registration_result(pcd_target_viz, pcd_source_viz, T_star)
     "REFINE REGISTRATION"
     print("Refining registration...", end="")
+    print(
+        "REFINEMENT",
+        refinement_iterations,
+        refinement_distnace_threshold,
+        icp_type,
+        T_star,
+    )
     T_refined = refine_registration(
         pcd_source_ds,
         pcd_target_ds,
