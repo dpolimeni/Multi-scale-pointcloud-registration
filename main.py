@@ -27,10 +27,11 @@ from src.utils.constants import (
     __ALIGNER_MU__,
     __ALIGNER_STD__,
     __MULTISTART_ATTEMPTS__,
+    __ALIGNER_EPS__,
 )
 
 
-def main(__ALIGNER_EPS__=None):
+def main():
     YAML_PATH = os.path.join(os.getcwd(), "yml", "mcs_registration.yml")
 
     with open(YAML_PATH, "r") as f:

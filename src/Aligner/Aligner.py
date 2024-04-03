@@ -16,7 +16,7 @@ from src.utils.constants import (
     __ALIGNER_STD__,
     __ALIGNER_MAX_ITER__,
     __ALIGNER_DELTA__,
-    __ALIGNER_EPSILON__,
+    __ALIGNER_EPS__,
     __MULTISTART_ATTEMPTS__,
     __REFINER_MAX_ITER__,
     __REFINER_DISTANCE_THRESHOLD__,
@@ -37,7 +37,7 @@ class Aligner:
         std: float = __ALIGNER_STD__,
         delta: float = __ALIGNER_DELTA__,
         max_iter: int = __ALIGNER_MAX_ITER__,
-        eps: float = __ALIGNER_EPSILON__,
+        eps: float = __ALIGNER_EPS__,
         visualize_intermediate_steps: bool = False,
     ):
         """
@@ -73,7 +73,7 @@ class Aligner:
         else:
             self._deg = deg
 
-        if mu <= 0:
+        if mu < 0:
             msg = f"mu cannot be 0 or less. Provided: {mu}"
             self._LOG.warning(msg)
             self._mu = __ALIGNER_MU__
@@ -100,11 +100,11 @@ class Aligner:
             self._max_iter = __ALIGNER_MAX_ITER__
         else:
             self._max_iter = max_iter
-
+        print("EPS", eps)
         if eps <= 0:
             msg = f"eps cannot be 0 or less. Provided: {eps}"
             self._LOG.warning(msg)
-            self._eps = __ALIGNER_EPSILON__
+            self._eps = __ALIGNER_EPS__
         else:
             self._eps = eps
 
