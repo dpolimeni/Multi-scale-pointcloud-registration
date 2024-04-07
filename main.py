@@ -28,6 +28,8 @@ from src.utils.constants import (
     __ALIGNER_STD__,
     __MULTISTART_ATTEMPTS__,
     __ALIGNER_EPS__,
+    __MAX_CORRESPONDENCE_DISTANCE__,
+    __MAX_ITERATIONS__,
 )
 
 
@@ -93,8 +95,8 @@ def main():
 
     # TODO remove magic numbers
     optimizer = GeneralizedICP(
-        max_correspondence_distance=0.5,
-        max_iterations=100,
+        max_correspondence_distance=__MAX_CORRESPONDENCE_DISTANCE__,
+        max_iterations=__MAX_ITERATIONS__,
     )
 
     aligner = Aligner(
@@ -128,7 +130,7 @@ def main():
     source = create_cloud(source_processed)
     target = create_cloud(target_processed * optimal_scale_factor)
 
-    draw_registration_result(source, target, optimal_transformation)
+    draw_registration_result(source, target, optimal_transformation.T)
 
 
 if __name__ == "__main__":

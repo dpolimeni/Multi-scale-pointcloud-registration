@@ -152,7 +152,7 @@ class Aligner:
         # Generate random translation vector
         translation = self._mu + np.random.randn(3) * self._std
 
-        return rotation_matrix, translation
+        return rotation_matrix.T, translation
 
     def multistart_registration(
         self, source: np.ndarray, target: np.ndarray
@@ -187,7 +187,7 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation)
+                T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation.T)
                 T[:3, 3] = (
                     np.dot(current_transform[:3, :3], initial_translation).ravel()
                     + current_transform[:3, 3]

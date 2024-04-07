@@ -92,9 +92,9 @@ class VoxelDownsampler(IProcessBlock):
         source_point_cloud.points = o3d.utility.Vector3dVector(cloud)
 
         # Downsample first run
-        obtained_cloud = source_point_cloud.voxel_down_sample(current_voxel_size)
+        best_cloud = source_point_cloud.voxel_down_sample(current_voxel_size)
         # Get number of points
-        n_points = np.asarray(obtained_cloud.points).shape[0]
+        n_points = np.asarray(best_cloud.points).shape[0]
         # Compute Metric
         metric = np.abs(self._target_points - n_points)
 
@@ -106,6 +106,7 @@ class VoxelDownsampler(IProcessBlock):
             if obtained_metric < metric:
                 current_voxel_size = new_voxel_size
                 metric = obtained_metric
+                best_cloud = obtained_cloud
                 continue
 
             obtained_cloud, new_voxel_size, obtained_metric = self.compass_step(
@@ -115,13 +116,14 @@ class VoxelDownsampler(IProcessBlock):
             if obtained_metric < metric:
                 current_voxel_size = new_voxel_size
                 metric = obtained_metric
+                best_cloud = obtained_cloud
                 continue
 
             self._delta = self._delta / 2
 
         # Log the voxel size and the number of points
         self._LOG.debug(msg=f"Voxel size: {current_voxel_size}, Metric: {metric}")
-        return np.asarray(obtained_cloud.points)
+        return np.asarray(best_cloud.points)
 
     def __repr__(self):
         return (
