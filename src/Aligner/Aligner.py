@@ -55,9 +55,7 @@ class Aligner:
         :param eps: stopping criteria on delta for the compass search
         """
 
-        self._LOG = LoggerFactory.get_logger(
-            log_name=self.__class__.__name__, log_on_file=True
-        )
+        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=True)
 
         if attempts <= 0:
             msg = f"attempts cannot be 0 or less. Provided: {attempts}"
@@ -154,9 +152,7 @@ class Aligner:
 
         return rotation_matrix.T, translation
 
-    def multistart_registration(
-        self, source: np.ndarray, target: np.ndarray
-    ) -> Tuple[np.ndarray, float]:
+    def multistart_registration(self, source: np.ndarray, target: np.ndarray) -> Tuple[np.ndarray, float]:
         """Perform multi-start registration on the source and target point clouds.
         :param source: Source point cloud
         :param target: Target point cloud
@@ -173,14 +169,10 @@ class Aligner:
 
             # Generate random rotation and translation matrices
             initial_rotation, initial_translation = self.initialize_rotation()
-            source_initialized = (
-                np.dot(source_copy, initial_rotation) + initial_translation
-            )
+            source_initialized = np.dot(source_copy, initial_rotation) + initial_translation
 
             # Perform registration
-            current_transform, current_metric = self._optimizer.optimize(
-                source_initialized, target
-            )
+            current_transform, current_metric = self._optimizer.optimize(source_initialized, target)
 
             if current_metric < metric:
                 # Update metric
@@ -188,10 +180,7 @@ class Aligner:
                 # Define Transformation
                 T = np.eye(4)
                 T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation.T)
-                T[:3, 3] = (
-                    np.dot(current_transform[:3, :3], initial_translation).ravel()
-                    + current_transform[:3, 3]
-                )
+                T[:3, 3] = np.dot(current_transform[:3, :3], initial_translation).ravel() + current_transform[:3, 3]
                 best_transformation = T
 
         return best_transformation, metric  # best_transformation, metric
@@ -213,9 +202,7 @@ class Aligner:
         """
         new_scale_factors = scale_factors + delta
         target_scaled = target * new_scale_factors
-        current_rotation, current_metric = self.multistart_registration(
-            source, target_scaled
-        )
+        current_rotation, current_metric = self.multistart_registration(source, target_scaled)
         return new_scale_factors, current_rotation, current_metric
 
     def align(
@@ -235,9 +222,7 @@ class Aligner:
         optimal_scale_factors = np.ones((1, 3))
 
         start = time.time()
-        optimal_transformation, optimal_metric = self.multistart_registration(
-            source, target
-        )
+        optimal_transformation, optimal_metric = self.multistart_registration(source, target)
         self._LOG.info(f"Multi-start registration time: {time.time() - start}")
 
         # INITIALIZE ERRORS LIST
@@ -307,15 +292,11 @@ class Aligner:
         icp_type: str = "PointToPoint",
     ) -> (np.ndarray, float):
         if icp_type == "PointToPoint":
-            icp_type = (
-                o3d.pipelines.registration.TransformationEstimationPointToPoint()
-            )  # for faster convergence
+            icp_type = o3d.pipelines.registration.TransformationEstimationPointToPoint()  # for faster convergence
         if icp_type == "PointToPlane":
             icp_type = o3d.pipelines.registration.TransformationEstimationPointToPlane()
         # Define convergence criterion
-        convergence_rule = o3d.pipelines.registration.ICPConvergenceCriteria(
-            max_iteration=max_iteration
-        )
+        convergence_rule = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=max_iteration)
 
         source_cloud = create_cloud(points=source)
         target_cloud = create_cloud(points=target)

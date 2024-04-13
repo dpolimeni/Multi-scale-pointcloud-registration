@@ -20,9 +20,7 @@ class GeneralizedICP(IOptimizer):
         :param max_iterations:
         """
 
-        self._LOG = LoggerFactory.get_logger(
-            log_name=self.__class__.__name__, log_on_file=False
-        )
+        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
         if max_correspondence_distance <= 0:
             msg = f"max correspondence distance cannot be 0 or less. Provided: {max_correspondence_distance}"
             self._LOG.warning(msg)
@@ -37,16 +35,10 @@ class GeneralizedICP(IOptimizer):
         else:
             self._max_iterations = max_iterations
 
-        self._LOG.debug(
-            f"Initialized {self.__class__.__name__} with parameters: {self}"
-        )
+        self._LOG.debug(f"Initialized {self.__class__.__name__} with parameters: {self}")
 
-    def optimize(
-        self, source: np.ndarray, target: np.ndarray, **kwargs
-    ) -> Tuple[np.ndarray, float]:
-        icp_type = (
-            o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()
-        )
+    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
+        icp_type = o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()
 
         source_point_cloud = o3d.geometry.PointCloud()
         target_point_cloud = o3d.geometry.PointCloud()
@@ -60,9 +52,7 @@ class GeneralizedICP(IOptimizer):
                 self._max_correspondence_distance,
                 np.eye(4),
                 icp_type,
-                o3d.pipelines.registration.ICPConvergenceCriteria(
-                    max_iteration=self._max_iterations
-                ),
+                o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=self._max_iterations),
             )
         )
         return optimization_result.transformation, optimization_result.inlier_rmse

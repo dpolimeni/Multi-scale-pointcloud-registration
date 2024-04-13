@@ -7,9 +7,7 @@ from pathlib import Path
 __TIME_NOW__ = time.time()
 
 # TIMESTAMP EXPRESSED IN HUMAN READABLE FORMAT
-__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime(
-    "%Y_%m_%d_%H_%M_%S"
-)
+__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime("%Y_%m_%d_%H_%M_%S")
 
 # PROJECT ROOT
 __ROOT__ = str(Path(os.getcwd()).parent)

@@ -117,9 +117,7 @@ def preprocess_point_cloud(pcd, radius_normal, radius_feature, voxel_size):
     pcd_down = pcd_down.voxel_down_sample(voxel_size)
 
     # Estimate Normals
-    pcd_down.estimate_normals(
-        o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30)
-    )
+    pcd_down.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30))
 
     # Estimate FPFH Features
     pcd_fpfh = o3d.pipelines.registration.compute_fpfh_feature(
@@ -198,9 +196,7 @@ def execute_fast_global_registration(
 "GENERALIZED ICP, TO REFINE LATER ON"
 
 
-def execute_generalized_icp_registration(
-    source, target, max_iterations=100, distance_threshold=0.8
-):
+def execute_generalized_icp_registration(source, target, max_iterations=100, distance_threshold=0.8):
     icp_type = o3d.pipelines.registration.TransformationEstimationForGeneralizedICP()
 
     result = o3d.pipelines.registration.registration_generalized_icp(
@@ -251,9 +247,7 @@ def execute_multistart_registration(
                 distance_threshold=distance_threshold,
             )
         if reg_type == "gicp":
-            result = execute_generalized_icp_registration(
-                source=source_copy, target=target
-            )
+            result = execute_generalized_icp_registration(source=source_copy, target=target)
         # Check if improvement
         if result.inlier_rmse < metric:
             # Update metric
@@ -262,10 +256,7 @@ def execute_multistart_registration(
             # Find T
             T = np.eye(4)
             T[:3, :3] = np.dot(result.transformation[:3, :3], mat_init[:3, :3])
-            T[:3, 3] = (
-                np.dot(result.transformation[:3, :3], mat_init[:3, 3]).ravel()
-                + result.transformation[:3, 3]
-            )
+            T[:3, 3] = np.dot(result.transformation[:3, :3], mat_init[:3, 3]).ravel() + result.transformation[:3, 3]
             best_T = T
 
     return best_T, metric
@@ -387,15 +378,11 @@ def refine_registration(
     icp_type="PointToPoint",
 ):
     if icp_type == "PointToPoint":
-        icp_type = (
-            o3d.pipelines.registration.TransformationEstimationPointToPoint()
-        )  # for faster convergence
+        icp_type = o3d.pipelines.registration.TransformationEstimationPointToPoint()  # for faster convergence
     if icp_type == "PointToPlane":
         icp_type = o3d.pipelines.registration.TransformationEstimationPointToPlane()
     # Define convergence criterion
-    convergence_rule = o3d.pipelines.registration.ICPConvergenceCriteria(
-        max_iteration=max_iteration
-    )
+    convergence_rule = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration=max_iteration)
     # Execute ICP
     result = o3d.pipelines.registration.registration_icp(
         source,
@@ -414,15 +401,9 @@ def add_noise(cloud, n_points=500):
     max_coordinates = np.max(cloud, axis=0)
     min_coordinates = np.min(cloud, axis=0)
 
-    noise_x = np.random.uniform(
-        min_coordinates[0], max_coordinates[0], n_points
-    ).reshape((-1, 1))
-    noise_y = np.random.uniform(
-        min_coordinates[1], max_coordinates[1], n_points
-    ).reshape((-1, 1))
-    noise_z = np.random.uniform(
-        min_coordinates[2], max_coordinates[2], n_points
-    ).reshape((-1, 1))
+    noise_x = np.random.uniform(min_coordinates[0], max_coordinates[0], n_points).reshape((-1, 1))
+    noise_y = np.random.uniform(min_coordinates[1], max_coordinates[1], n_points).reshape((-1, 1))
+    noise_z = np.random.uniform(min_coordinates[2], max_coordinates[2], n_points).reshape((-1, 1))
 
     noise = np.concatenate((noise_x, noise_y, noise_z), axis=1)
 
@@ -478,9 +459,7 @@ def evaluate_distortion(source_cloud, target_cloud, scale_star, T_star, dist_tar
     :return:
     """
 
-    source_rotated = np.dot(source_cloud, T_star[:3, :3]) + T_star[:3, 3].reshape(
-        (1, 3)
-    )
+    source_rotated = np.dot(source_cloud, T_star[:3, :3]) + T_star[:3, 3].reshape((1, 3))
     source_rescaled = dist_target_ds * (source_rotated / scale_star)
 
     RMSE = np.linalg.norm(source_rescaled - target_cloud) / np.sqrt(len(source_rotated))
