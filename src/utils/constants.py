@@ -18,6 +18,20 @@ __LOG_FOLDER__ = os.path.join(__ROOT__, "logs", __DATETIME_NOW__)
 # LOG DEFAULT FORMAT
 __DEFAULT_LOG_FORMAT__ = "%(asctime)s | %(name)s | %(levelname)s : %(message)s"
 
+# ------------------------------------------------------------------------------------------------------- #
+# OUTLIER REMOVAL
+# ------------------------------------------------------------------------------------------------------- #
+# SOR
+__NB_NEIGHBOURS__ = 64
+"""
+Number of neighbours used by SOR algorithm (to compute mean and variance)
+"""
+__STD_RATIO__ = 2
+"""
+SOR parameter. By increasing it, more points are kept (as inliers)
+"""
+# ------------------------------------------------------------------------------------------------------- #
+
 # DOWN SAMPLERS
 # RANDOM DOWN SAMPLER
 __RANDOM_SAMPLE_SIZE__ = 15000
