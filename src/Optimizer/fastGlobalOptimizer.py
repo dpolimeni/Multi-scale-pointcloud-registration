@@ -43,7 +43,9 @@ class FastGlobalOptimizer(IOptimizer):
         :param fpfh_knn:
         :param fpfh_radius_features:
         """
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
         if division_factor <= 0:
             msg = f"division factor cannot be 0 or less. Provided: {division_factor}"
             self._LOG.error(msg)
@@ -114,32 +116,44 @@ class FastGlobalOptimizer(IOptimizer):
 
         # Estimate Normals
         source_copy.estimate_normals(
-            o3d.geometry.KDTreeSearchParamHybrid(radius=self._normal_estimate_radius, max_nn=self._normal_estimate_knn)
+            o3d.geometry.KDTreeSearchParamHybrid(
+                radius=self._normal_estimate_radius, max_nn=self._normal_estimate_knn
+            )
         )
         target_copy.estimate_normals(
-            o3d.geometry.KDTreeSearchParamHybrid(radius=self._normal_estimate_radius, max_nn=self._normal_estimate_knn)
+            o3d.geometry.KDTreeSearchParamHybrid(
+                radius=self._normal_estimate_radius, max_nn=self._normal_estimate_knn
+            )
         )
 
         # Estimate FPFH Features
         source_fpfh_features = o3d.pipelines.registration.compute_fpfh_feature(
             source_copy,
-            o3d.geometry.KDTreeSearchParamHybrid(radius=self._fpfh_radius, max_nn=self._fpfh_knn),
+            o3d.geometry.KDTreeSearchParamHybrid(
+                radius=self._fpfh_radius, max_nn=self._fpfh_knn
+            ),
         )
 
         target_fpfh_features = o3d.pipelines.registration.compute_fpfh_feature(
             source_copy,
-            o3d.geometry.KDTreeSearchParamHybrid(radius=self._fpfh_radius, max_nn=self._fpfh_knn),
+            o3d.geometry.KDTreeSearchParamHybrid(
+                radius=self._fpfh_radius, max_nn=self._fpfh_knn
+            ),
         )
 
         return source_fpfh_features, target_fpfh_features
 
-    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
+    def optimize(
+        self, source: np.ndarray, target: np.ndarray, **kwargs
+    ) -> Tuple[np.ndarray, float]:
         source_point_cloud = o3d.geometry.PointCloud()
         target_point_cloud = o3d.geometry.PointCloud()
         source_point_cloud.points = o3d.utility.Vector3dVector(source)
         target_point_cloud.points = o3d.utility.Vector3dVector(target)
 
-        source_fpfh_features, target_fpfh_features = self.get_fpfh_features(source_point_cloud, target_point_cloud)
+        source_fpfh_features, target_fpfh_features = self.get_fpfh_features(
+            source_point_cloud, target_point_cloud
+        )
 
         fast_global_option = o3d.pipelines.registration.FastGlobalRegistrationOption(
             division_factor=self._division_factor,
@@ -159,7 +173,11 @@ class FastGlobalOptimizer(IOptimizer):
             )
         )
 
-        return optimization_result.transformation, optimization_result.inlier_rmse
+        roto_translation = np.copy(optimization_result.transformation)
+        transposed_rotation = roto_translation[:3, :3].T
+        roto_translation[:3, :3] = transposed_rotation
+
+        return roto_translation, optimization_result.inlier_rmse
 
     def __repr__(self):
         return f"""{self.__class__.__name__}
