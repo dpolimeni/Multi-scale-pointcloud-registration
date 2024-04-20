@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
-from src.test_library.utils.constants import __SAMPLE_SIZE__
-from src.test_library.utils.logger_factory import LoggerFactory
+from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
+from pointclouds.utils.constants import __SAMPLE_SIZE__
+from pointclouds.utils.logger_factory import LoggerFactory
 
 
 class RandomDownsampler(IProcessBlock):
@@ -11,7 +11,9 @@ class RandomDownsampler(IProcessBlock):
         :param sample_size: the number of points to keep from the cloud
         :param replace: choose to sample with or without replacement
         """
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
 
         if sample_size <= 0:
             msg = f"sample size cannot be 0 or less. Provided: {sample_size}. Using default value: {__SAMPLE_SIZE__}"
@@ -30,7 +32,9 @@ class RandomDownsampler(IProcessBlock):
         :return: randomly down-sampled cloud
         """
         # Downsample data
-        return cloud[np.random.choice(cloud.shape[0], self._sample_size, replace=self._replace)]
+        return cloud[
+            np.random.choice(cloud.shape[0], self._sample_size, replace=self._replace)
+        ]
 
     def __repr__(self):
         return f"{self.__class__.__name__}(sample_size={self._sample_size}, replace={self._replace})"

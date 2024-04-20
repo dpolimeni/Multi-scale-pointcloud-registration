@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 
-from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
-from src.test_library.utils.logger_factory import LoggerFactory
+from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
+from pointclouds.utils.logger_factory import LoggerFactory
 
 
 class Scaler(IProcessBlock):
@@ -11,7 +11,9 @@ class Scaler(IProcessBlock):
     """
 
     def __init__(self):
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
 
     def process(self, cloud: np.ndarray) -> np.ndarray:
         self._LOG.debug("Normalizing clouds")

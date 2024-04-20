@@ -5,21 +5,21 @@ import numpy as np
 import open3d as o3d
 import yaml
 
-from src.test_library.Aligner.Aligner import Aligner
-from src.test_library.Optimizer.generalizedICP import GeneralizedICP
-from src.test_library.Preprocessor.farthestDownsampler import FarthestDownsampler
-from src.test_library.Preprocessor.outliers.sor import SOR
-from src.test_library.Preprocessor.preprocessor import Preprocessor
-from src.test_library.Preprocessor.randomDownsampler import RandomDownsampler
-from src.test_library.Preprocessor.scaler import Scaler
-from src.test_library.Preprocessor.voxelDownsampler import VoxelDownsampler
-from src.test_library.Visualizer.Visualizer import (
+from pointclouds.Aligner.Aligner import Aligner
+from pointclouds.Optimizer.generalizedICP import GeneralizedICP
+from pointclouds.Preprocessor.farthestDownsampler import FarthestDownsampler
+from pointclouds.Preprocessor.outliers.sor import SOR
+from pointclouds.Preprocessor.preprocessor import Preprocessor
+from pointclouds.Preprocessor.randomDownsampler import RandomDownsampler
+from pointclouds.Preprocessor.scaler import Scaler
+from pointclouds.Preprocessor.voxelDownsampler import VoxelDownsampler
+from pointclouds.Visualizer.Visualizer import (
     visualize_point_clouds,
     draw_registration_result,
     np_draw_registration_result,
 )
-from src.test_library.utils.create_cloud import create_cloud
-from src.test_library.utils.constants import (
+from pointclouds.utils.create_cloud import create_cloud
+from pointclouds.utils.constants import (
     __NB_NEIGHBOURS__,
     __STD_RATIO__,
     __FARTHEST_SAMPLE_SIZE__,

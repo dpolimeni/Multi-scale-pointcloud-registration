@@ -1,10 +1,10 @@
 import numpy as np
 from numpy import ndarray
-from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
-from src.test_library.utils.logger_factory import LoggerFactory
+from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
+from pointclouds.utils.logger_factory import LoggerFactory
 import open3d as o3d
 
-from src.test_library.utils.constants import (
+from pointclouds.utils.constants import (
     __NB_NEIGHBOURS__,
     __STD_RATIO__,
 )

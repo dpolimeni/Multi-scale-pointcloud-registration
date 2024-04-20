@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 
-from src.test_library.utils.util_mcs_registration import generate_initialization_matrix
+from pointclouds.utils.util_mcs_registration import generate_initialization_matrix
 
 # Create a 5x3 array
 source = np.random.randn(5, 3)

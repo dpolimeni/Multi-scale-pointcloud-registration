@@ -1,14 +1,14 @@
 import numpy as np
 import open3d as o3d
 
-from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
-from src.test_library.utils.constants import (
+from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
+from pointclouds.utils.constants import (
     __BASE_VOXEL_SIZE__,
     __MIN_VOXEL_SIZE__,
     __DELTA__,
     __EPS__,
 )
-from src.test_library.utils.logger_factory import LoggerFactory
+from pointclouds.utils.logger_factory import LoggerFactory
 
 
 class VoxelDownsampler(IProcessBlock):
@@ -33,7 +33,9 @@ class VoxelDownsampler(IProcessBlock):
         :param eps:
         """
 
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
 
         if target_points <= 0:
             msg = f"target points cannot be 0 or less. Provided: {target_points}"
@@ -72,7 +74,9 @@ class VoxelDownsampler(IProcessBlock):
 
         self._LOG.debug(msg=f"initialized downsampler: {self}")
 
-    def compass_step(self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float):
+    def compass_step(
+        self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
+    ):
         new_voxel_size = current_voxel_size + delta
         if new_voxel_size <= self._min_voxel_size:
             new_voxel_size = self._min_voxel_size
