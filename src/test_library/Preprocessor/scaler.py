@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 
-from src.Preprocessor.iProcessBlock import IProcessBlock
-from src.utils.logger_factory import LoggerFactory
+from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
+from src.test_library.utils.logger_factory import LoggerFactory
 
 
 class Scaler(IProcessBlock):

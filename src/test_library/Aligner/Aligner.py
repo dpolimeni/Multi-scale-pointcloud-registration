@@ -7,10 +7,10 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from src.Optimizer.iOptimizer import IOptimizer
-from src.Preprocessor.preprocessor import Preprocessor
-from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
-from src.utils.constants import (
+from src.test_library.Optimizer.iOptimizer import IOptimizer
+from src.test_library.Preprocessor.preprocessor import Preprocessor
+from src.test_library.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
+from src.test_library.utils.constants import (
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
     __ALIGNER_STD__,
@@ -21,8 +21,8 @@ from src.utils.constants import (
     __REFINER_MAX_ITER__,
     __REFINER_DISTANCE_THRESHOLD__,
 )
-from src.utils.create_cloud import create_cloud
-from src.utils.logger_factory import LoggerFactory
+from src.test_library.utils.create_cloud import create_cloud
+from src.test_library.utils.logger_factory import LoggerFactory
 
 
 class Aligner:

@@ -1,9 +1,9 @@
 from typing import List
 
 import numpy as np
-from src.Preprocessor.iProcessBlock import IProcessBlock
-from src.Preprocessor.scaler import Scaler
-from src.utils.logger_factory import LoggerFactory
+from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
+from src.test_library.Preprocessor.scaler import Scaler
+from src.test_library.utils.logger_factory import LoggerFactory
 
 
 class Preprocessor:

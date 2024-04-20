@@ -4,7 +4,7 @@ Created on Wed Jun 22 17:03:54 2022
 
 @author: Alessandro & Diego
 """
-from src.utils.util_mcs_registration import *
+from src.test_library.utils.util_mcs_registration import *
 import time
 
 "IMPORT LIBRARIES"

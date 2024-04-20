@@ -1,14 +1,14 @@
 import numpy as np
 import open3d as o3d
 
-from src.Preprocessor.iProcessBlock import IProcessBlock
-from src.utils.constants import (
+from src.test_library.Preprocessor.iProcessBlock import IProcessBlock
+from src.test_library.utils.constants import (
     __BASE_VOXEL_SIZE__,
     __MIN_VOXEL_SIZE__,
     __DELTA__,
     __EPS__,
 )
-from src.utils.logger_factory import LoggerFactory
+from src.test_library.utils.logger_factory import LoggerFactory
 
 
 class VoxelDownsampler(IProcessBlock):

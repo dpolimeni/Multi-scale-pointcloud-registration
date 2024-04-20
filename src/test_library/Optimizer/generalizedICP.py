@@ -3,9 +3,9 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from src.Optimizer.iOptimizer import IOptimizer
-from src.utils.constants import __MAX_CORRESPONDENCE_DISTANCE__, __MAX_ITERATIONS__
-from src.utils.logger_factory import LoggerFactory
+from src.test_library.Optimizer.iOptimizer import IOptimizer
+from src.test_library.utils.constants import __MAX_CORRESPONDENCE_DISTANCE__, __MAX_ITERATIONS__
+from src.test_library.utils.logger_factory import LoggerFactory
 
 
 class GeneralizedICP(IOptimizer):
