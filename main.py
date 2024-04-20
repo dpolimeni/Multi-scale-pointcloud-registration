@@ -7,6 +7,7 @@ import yaml
 
 from src.Aligner.Aligner import Aligner
 from src.Optimizer.generalizedICP import GeneralizedICP
+from src.Optimizer.fastGlobalOptimizer import FastGlobalOptimizer
 from src.Preprocessor.farthestDownsampler import FarthestDownsampler
 from src.Preprocessor.outliers.sor import SOR
 from src.Preprocessor.preprocessor import Preprocessor
@@ -35,8 +36,7 @@ from src.utils.constants import (
     __ALIGNER_STD__,
     __MULTISTART_ATTEMPTS__,
     __ALIGNER_EPS__,
-    __MAX_CORRESPONDENCE_DISTANCE__,
-    __MAX_ITERATIONS__,
+    __MAX_ITERATIONS__, __MAXIMUM_CORRESPONDENCE_DISTANCE__,
 )
 
 
@@ -102,11 +102,13 @@ def main():
         [sor, random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
-    # TODO remove magic numbers
     optimizer = GeneralizedICP(
-        max_correspondence_distance=__MAX_CORRESPONDENCE_DISTANCE__,
+        maximum_correspondence_distance=__MAXIMUM_CORRESPONDENCE_DISTANCE__,
         max_iterations=__MAX_ITERATIONS__,
     )
+
+    #optimizer = FastGlobalOptimizer(
+    #)
 
     aligner = Aligner(
         source_preprocessor,
@@ -131,9 +133,6 @@ def main():
     )
     print(f"Elapsed time: {time.time() - start}")
 
-    # visualize_point_clouds(
-    #     [source_array, target_array * optimal_scale_factor], [(0, 0, 1), (1, 0, 0)]
-    # )
     source_processed = source_preprocessor.preprocess(source_array)
     target_processed = target_preprocessor.preprocess(target_array)
     source = create_cloud(source_processed)
@@ -142,7 +141,7 @@ def main():
     np_draw_registration_result(
         np.asarray(source.points), np.asarray(target.points), optimal_transformation
     )
-    draw_registration_result(source, target, optimal_transformation)
+    # draw_registration_result(source, target, optimal_transformation)
 
 
 if __name__ == "__main__":
