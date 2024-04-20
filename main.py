@@ -92,10 +92,10 @@ def main():
     scaler = Scaler()
 
     source_preprocessor = Preprocessor(
-        [random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
+        [sor, random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
     )
     target_preprocessor = Preprocessor(
-        [random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
+        [sor, random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
     # TODO remove magic numbers
@@ -119,7 +119,7 @@ def main():
     start = time.time()
 
     optimal_transformation, optimal_metric, optimal_scale_factor, errors = (
-        aligner.align(source_array, target_array)
+        aligner.align(source_array, target_array, refine_registration=True)
     )
     print("done")
     print(
@@ -135,7 +135,7 @@ def main():
     source = create_cloud(source_processed)
     target = create_cloud(target_processed * optimal_scale_factor)
 
-    draw_registration_result(source, target, optimal_transformation.T)
+    draw_registration_result(source, target, optimal_transformation)
 
 
 if __name__ == "__main__":
