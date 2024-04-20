@@ -53,3 +53,5 @@ assets/!important_file.txt
 venv/
 .env
 ```
+
+*.pyc
