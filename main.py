@@ -8,13 +8,20 @@ import yaml
 from src.Aligner.Aligner import Aligner
 from src.Optimizer.generalizedICP import GeneralizedICP
 from src.Preprocessor.farthestDownsampler import FarthestDownsampler
+from src.Preprocessor.outliers.sor import SOR
 from src.Preprocessor.preprocessor import Preprocessor
 from src.Preprocessor.randomDownsampler import RandomDownsampler
 from src.Preprocessor.scaler import Scaler
 from src.Preprocessor.voxelDownsampler import VoxelDownsampler
-from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
+from src.Visualizer.Visualizer import (
+    visualize_point_clouds,
+    draw_registration_result,
+    np_draw_registration_result,
+)
 from src.utils.create_cloud import create_cloud
 from src.utils.constants import (
+    __NB_NEIGHBOURS__,
+    __STD_RATIO__,
     __FARTHEST_SAMPLE_SIZE__,
     __RANDOM_SAMPLE_SIZE__,
     __VOXEL_SAMPLE_SIZE__,
@@ -67,6 +74,8 @@ def main():
 
     "PREPROCESSING"
     print("Preprocessing...", end="")
+    sor = SOR(nb_neighbours=__NB_NEIGHBOURS__, std_ratio=__STD_RATIO__)
+
     random_downsampler = RandomDownsampler(__RANDOM_SAMPLE_SIZE__)
     fps_downsampler = FarthestDownsampler(__FARTHEST_SAMPLE_SIZE__)
     source_voxel_downsampler = VoxelDownsampler(
@@ -87,10 +96,10 @@ def main():
     scaler = Scaler()
 
     source_preprocessor = Preprocessor(
-        [random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
+        [sor, random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
     )
     target_preprocessor = Preprocessor(
-        [random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
+        [sor, random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
     # TODO remove magic numbers
@@ -114,7 +123,7 @@ def main():
     start = time.time()
 
     optimal_transformation, optimal_metric, optimal_scale_factor, errors = (
-        aligner.align(source_array, target_array)
+        aligner.align(source_array, target_array, refine_registration=False)
     )
     print("done")
     print(
@@ -130,7 +139,10 @@ def main():
     source = create_cloud(source_processed)
     target = create_cloud(target_processed * optimal_scale_factor)
 
-    draw_registration_result(source, target, optimal_transformation.T)
+    np_draw_registration_result(
+        np.asarray(source.points), np.asarray(target.points), optimal_transformation
+    )
+    draw_registration_result(source, target, optimal_transformation)
 
 
 if __name__ == "__main__":

@@ -126,9 +126,7 @@ if __name__ == "__main__":
         pcd_target.points = o3d.utility.Vector3dVector(target_array)
         # Create copy of target array before outlier removal
         # Use SOR to remove outliers
-        inliers, ind = pcd_target.remove_statistical_outlier(
-            nb_neighbors=nb_neighbors, std_ratio=std_ratio
-        )
+        inliers, ind = pcd_target.remove_statistical_outlier(nb_neighbors=nb_neighbors, std_ratio=std_ratio)
 
         # Remove # to see outliers according to SOR
         # outliers = pcd_target.select_by_index(ind, invert = True)
@@ -144,9 +142,7 @@ if __name__ == "__main__":
         print("Removing noise from source cloud...", end="")
         pcd_source = o3d.geometry.PointCloud()
         pcd_source.points = o3d.utility.Vector3dVector(source_array)
-        inliers, ind = pcd_source.remove_statistical_outlier(
-            nb_neighbors=nb_neighbors, std_ratio=std_ratio
-        )
+        inliers, ind = pcd_source.remove_statistical_outlier(nb_neighbors=nb_neighbors, std_ratio=std_ratio)
 
         # Remove # to see outliers according to SOR
         # outliers = pcd_target.select_by_index(ind, invert = True)
@@ -287,18 +283,10 @@ if __name__ == "__main__":
     print("time requested:", (time.time() - start) / 60, "minutes")
 
     "SCALE CLOUDS"
-    pcd_target.points = o3d.utility.Vector3dVector(
-        np.array(pcd_target.points) * coeff_star
-    )
-    pcd_target_no_sor.points = o3d.utility.Vector3dVector(
-        np.array(pcd_target_no_sor.points) * coeff_star
-    )
-    pcd_target_ds.points = o3d.utility.Vector3dVector(
-        np.array(pcd_target_ds.points) * coeff_star
-    )
-    pcd_target_viz.points = o3d.utility.Vector3dVector(
-        np.array(pcd_target_viz.points) * coeff_star
-    )
+    pcd_target.points = o3d.utility.Vector3dVector(np.array(pcd_target.points) * coeff_star)
+    pcd_target_no_sor.points = o3d.utility.Vector3dVector(np.array(pcd_target_no_sor.points) * coeff_star)
+    pcd_target_ds.points = o3d.utility.Vector3dVector(np.array(pcd_target_ds.points) * coeff_star)
+    pcd_target_viz.points = o3d.utility.Vector3dVector(np.array(pcd_target_viz.points) * coeff_star)
     draw_registration_result(pcd_target_viz, pcd_source_viz, T_star)
     "REFINE REGISTRATION"
     print("Refining registration...", end="")

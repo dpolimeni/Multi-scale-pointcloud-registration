@@ -152,7 +152,7 @@ class Aligner:
         # Generate random translation vector
         translation = self._mu + np.random.randn(3) * self._std
 
-        return rotation_matrix.T, translation
+        return rotation_matrix, translation
 
     def multistart_registration(
         self, source: np.ndarray, target: np.ndarray
@@ -187,9 +187,9 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation.T)
+                T[:3, :3] = np.dot(initial_rotation, current_transform[:3, :3])
                 T[:3, 3] = (
-                    np.dot(current_transform[:3, :3], initial_translation).ravel()
+                    np.dot(initial_translation, current_transform[:3, :3]).ravel()
                     + current_transform[:3, 3]
                 )
                 best_transformation = T
@@ -290,6 +290,7 @@ class Aligner:
             )
 
         if refine_registration:
+            target = target * optimal_scale_factors
             optimal_transformation, optimal_metric = self.refine_registration(
                 source=source, target=target, initial_transform=optimal_transformation
             )
@@ -331,11 +332,8 @@ class Aligner:
         )
 
         T_refined = result.transformation
-        T = np.copy(T_refined)
-        T[:3, :3] = T_refined[:3, :3].T
-        T[:3, 3] = -np.dot(T_refined[:3, 3], T_refined[:3, :3])
 
-        return T, result.inlier_rmse
+        return T_refined, result.inlier_rmse
 
     def __repr__(self):
         return f"""{self.__class__.__name__}

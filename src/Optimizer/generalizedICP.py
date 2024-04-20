@@ -65,7 +65,12 @@ class GeneralizedICP(IOptimizer):
                 ),
             )
         )
-        return optimization_result.transformation, optimization_result.inlier_rmse
+
+        roto_translation = np.copy(optimization_result.transformation)
+        transposed_rotation = roto_translation[:3, :3].T
+        roto_translation[:3, :3] = transposed_rotation
+
+        return roto_translation, optimization_result.inlier_rmse
 
     def __repr__(self):
         return f"""{self.__class__.__name__}

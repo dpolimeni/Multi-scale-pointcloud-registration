@@ -11,9 +11,7 @@ class Scaler(IProcessBlock):
     """
 
     def __init__(self):
-        self._LOG = LoggerFactory.get_logger(
-            log_name=self.__class__.__name__, log_on_file=False
-        )
+        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
 
     def process(self, cloud: np.ndarray) -> np.ndarray:
         self._LOG.debug("Normalizing clouds")

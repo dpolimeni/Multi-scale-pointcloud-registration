@@ -33,9 +33,7 @@ class VoxelDownsampler(IProcessBlock):
         :param eps:
         """
 
-        self._LOG = LoggerFactory.get_logger(
-            log_name=self.__class__.__name__, log_on_file=False
-        )
+        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
 
         if target_points <= 0:
             msg = f"target points cannot be 0 or less. Provided: {target_points}"
@@ -74,9 +72,7 @@ class VoxelDownsampler(IProcessBlock):
 
         self._LOG.debug(msg=f"initialized downsampler: {self}")
 
-    def compass_step(
-        self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float
-    ):
+    def compass_step(self, delta: float, cloud: o3d.geometry.PointCloud, current_voxel_size: float):
         new_voxel_size = current_voxel_size + delta
         if new_voxel_size <= self._min_voxel_size:
             new_voxel_size = self._min_voxel_size

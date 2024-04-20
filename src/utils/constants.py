@@ -7,9 +7,7 @@ from pathlib import Path
 __TIME_NOW__ = time.time()
 
 # TIMESTAMP EXPRESSED IN HUMAN READABLE FORMAT
-__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime(
-    "%Y_%m_%d_%H_%M_%S"
-)
+__DATETIME_NOW__ = formatted_time = datetime.fromtimestamp(__TIME_NOW__).strftime("%Y_%m_%d_%H_%M_%S")
 
 # PROJECT ROOT
 __ROOT__ = str(Path(os.getcwd()).parent)
@@ -19,6 +17,20 @@ __LOG_FOLDER__ = os.path.join(__ROOT__, "logs", __DATETIME_NOW__)
 
 # LOG DEFAULT FORMAT
 __DEFAULT_LOG_FORMAT__ = "%(asctime)s | %(name)s | %(levelname)s : %(message)s"
+
+# ------------------------------------------------------------------------------------------------------- #
+# OUTLIER REMOVAL
+# ------------------------------------------------------------------------------------------------------- #
+# SOR
+__NB_NEIGHBOURS__ = 64
+"""
+Number of neighbours used by SOR algorithm (to compute mean and variance)
+"""
+__STD_RATIO__ = 2
+"""
+SOR parameter. By increasing it, more points are kept (as inliers)
+"""
+# ------------------------------------------------------------------------------------------------------- #
 
 # DOWN SAMPLERS
 # RANDOM DOWN SAMPLER

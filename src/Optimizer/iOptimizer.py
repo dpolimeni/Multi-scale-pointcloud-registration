@@ -7,9 +7,7 @@ import numpy as np
 class IOptimizer(ABC):
 
     @abstractmethod
-    def optimize(
-        self, source: np.ndarray, target: np.ndarray, **kwargs
-    ) -> Tuple[np.ndarray, float]:
+    def optimize(self, source: np.ndarray, target: np.ndarray, **kwargs) -> Tuple[np.ndarray, float]:
         """Method to run the inner block optimizer.
 
         Args:
