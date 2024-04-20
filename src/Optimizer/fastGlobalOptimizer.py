@@ -180,7 +180,7 @@ class FastGlobalOptimizer(IOptimizer):
         # If the rmse is 0 raise an error as parameters are not correct
         if optimization_result.inlier_rmse == 0:
             msg = """Optimization failed with loss = 0. Parameters are not well set. 
-Probably due to maximum_correspondence_distance is set too low."""
+Probably due to maximum_correspondence_distance set too low."""
             self._LOG.error(msg)
             raise ValueError(msg)
 

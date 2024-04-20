@@ -36,8 +36,7 @@ from src.utils.constants import (
     __ALIGNER_STD__,
     __MULTISTART_ATTEMPTS__,
     __ALIGNER_EPS__,
-    __MAX_CORRESPONDENCE_DISTANCE__,
-    __MAX_ITERATIONS__,
+    __MAX_ITERATIONS__, __MAXIMUM_CORRESPONDENCE_DISTANCE__,
 )
 
 
@@ -103,14 +102,13 @@ def main():
         [sor, random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
-    # TODO remove magic numbers
     optimizer = GeneralizedICP(
-        max_correspondence_distance=__MAX_CORRESPONDENCE_DISTANCE__,
+        maximum_correspondence_distance=__MAXIMUM_CORRESPONDENCE_DISTANCE__,
         max_iterations=__MAX_ITERATIONS__,
     )
 
-    optimizer = FastGlobalOptimizer(
-    )
+    #optimizer = FastGlobalOptimizer(
+    #)
 
     aligner = Aligner(
         source_preprocessor,
