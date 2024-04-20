@@ -187,7 +187,7 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(initial_rotation, current_transform[:3, :3]).T
+                T[:3, :3] = np.dot(initial_rotation, current_transform[:3, :3])
                 T[:3, 3] = (
                     np.dot(initial_translation, current_transform[:3, :3]).ravel()
                     + current_transform[:3, 3]

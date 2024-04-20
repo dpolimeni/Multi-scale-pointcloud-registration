@@ -13,7 +13,11 @@ from src.Preprocessor.preprocessor import Preprocessor
 from src.Preprocessor.randomDownsampler import RandomDownsampler
 from src.Preprocessor.scaler import Scaler
 from src.Preprocessor.voxelDownsampler import VoxelDownsampler
-from src.Visualizer.Visualizer import visualize_point_clouds, draw_registration_result
+from src.Visualizer.Visualizer import (
+    visualize_point_clouds,
+    draw_registration_result,
+    np_draw_registration_result,
+)
 from src.utils.create_cloud import create_cloud
 from src.utils.constants import (
     __NB_NEIGHBOURS__,
@@ -119,7 +123,7 @@ def main():
     start = time.time()
 
     optimal_transformation, optimal_metric, optimal_scale_factor, errors = (
-        aligner.align(source_array, target_array, refine_registration=True)
+        aligner.align(source_array, target_array, refine_registration=False)
     )
     print("done")
     print(
@@ -135,6 +139,9 @@ def main():
     source = create_cloud(source_processed)
     target = create_cloud(target_processed * optimal_scale_factor)
 
+    np_draw_registration_result(
+        np.asarray(source.points), np.asarray(target.points), optimal_transformation
+    )
     draw_registration_result(source, target, optimal_transformation)
 
 
