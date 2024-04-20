@@ -174,7 +174,7 @@ class Aligner:
             # Generate random rotation and translation matrices
             initial_rotation, initial_translation = self.initialize_rotation()
             source_initialized = (
-                np.dot(source_copy, initial_rotation.T) + initial_translation
+                np.dot(source_copy, initial_rotation) + initial_translation
             )
 
             # Perform registration
@@ -187,9 +187,9 @@ class Aligner:
                 metric = current_metric
                 # Define Transformation
                 T = np.eye(4)
-                T[:3, :3] = np.dot(current_transform[:3, :3], initial_rotation)
+                T[:3, :3] = np.dot(initial_rotation, current_transform[:3, :3]).T
                 T[:3, 3] = (
-                    np.dot(current_transform[:3, :3], initial_translation).ravel()
+                    np.dot(initial_translation, current_transform[:3, :3]).ravel()
                     + current_transform[:3, 3]
                 )
                 best_transformation = T
