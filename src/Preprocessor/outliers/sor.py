@@ -21,7 +21,9 @@ class SOR(IProcessBlock):
         std_ratio (float): SOR parameter. By increasing it, more points are kept as inliers.
     """
 
-    def __init__(self, nb_neighbours: int, std_ratio: float) -> None:
+    def __init__(
+        self, nb_neighbours: int = __NB_NEIGHBOURS__, std_ratio: float = __STD_RATIO__
+    ) -> None:
         """
         Initialize the SOR object with the specified parameters.
 
@@ -32,7 +34,9 @@ class SOR(IProcessBlock):
 
         super().__init__()
 
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=True)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=True
+        )
 
         self._nb_neighbours = nb_neighbours
         """
@@ -62,24 +66,28 @@ class SOR(IProcessBlock):
         _temp.points = o3d.utility.Vector3dVector(np.copy(a=cloud))
 
         # Remove outliers
-        inliers, ind = _temp.remove_statistical_outlier(nb_neighbors=self._nb_neighbours, std_ratio=self._std_ratio)
+        inliers, ind = _temp.remove_statistical_outlier(
+            nb_neighbors=self._nb_neighbours, std_ratio=self._std_ratio
+        )
         inliers = np.asarray(inliers.points)
 
-        self._LOG.debug(msg=f"Cloud before SOR had {int(cloud.shape[0])} points. After SOR has {inliers.shape[0]} points!")
+        self._LOG.debug(
+            msg=f"Cloud before SOR had {int(cloud.shape[0])} points. After SOR has {inliers.shape[0]} points!"
+        )
 
         # Return only inliers
         return inliers
-    
+
     @property
-    def nb_neigbours(self) -> int:
+    def nb_neighbours(self) -> int:
         """
         Getter method for the number of neighbours parameter.
 
         Returns:
             int: Number of neighbours used by the SOR algorithm.
         """
-        return self._nb_neigbours
-    
+        return self._nb_neighbours
+
     @property
     def std_ratio(self) -> float:
         """
@@ -89,6 +97,6 @@ class SOR(IProcessBlock):
             float: Standard deviation ratio used by the SOR algorithm.
         """
         return self._std_ratio
-    
+
     def __repr__(self):
-        return f"{self.__class__.__name__}(nb_neighbours={self._ng_neighbours}, std_ratio={self._std_ratio})"
+        return f"{self.__class__.__name__}(nb_neighbours={self._nb_neighbours}, std_ratio={self._std_ratio})"

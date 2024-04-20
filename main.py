@@ -92,10 +92,10 @@ def main():
     scaler = Scaler()
 
     source_preprocessor = Preprocessor(
-        [sor, random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
+        [random_downsampler, fps_downsampler, scaler, source_voxel_downsampler],
     )
     target_preprocessor = Preprocessor(
-        [sor, random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
+        [random_downsampler, fps_downsampler, scaler, target_voxel_downsampler],
     )
 
     # TODO remove magic numbers
@@ -118,7 +118,9 @@ def main():
     )
     start = time.time()
 
-    optimal_transformation, optimal_metric, optimal_scale_factor, errors = aligner.align(source_array, target_array)
+    optimal_transformation, optimal_metric, optimal_scale_factor, errors = (
+        aligner.align(source_array, target_array)
+    )
     print("done")
     print(
         f"Optimal transformation: \n{optimal_transformation}\nOptimal metric: {optimal_metric}\nErrors: {errors}\nOptimal Scale Factors: {optimal_scale_factor}"
