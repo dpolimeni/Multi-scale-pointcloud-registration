@@ -1,14 +1,14 @@
 import numpy as np
 import open3d as o3d
 
-from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
-from pointclouds.utils.constants import (
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.utils.constants import (
     __BASE_VOXEL_SIZE__,
     __MIN_VOXEL_SIZE__,
     __DELTA__,
     __EPS__,
 )
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class VoxelDownsampler(IProcessBlock):

@@ -3,12 +3,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pointclouds"
+name = "or-pcd"
 version = "0.0.1"
 authors = [
   { name="Diego Polimeni", email="diego.polimeni@gmail.com" },
+  { name="Alessandro Pannone", email="a.pannone1798@gmail.com" },
 ]
-description = "A small example package"
+description = "A python package to perform pointcloud registration with scale differences using a two-block optimization approach"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -77,5 +78,5 @@ dependencies =  [
     ]
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/dpolimeni/Multi-scale-pointcloud-registration"
+Issues = "https://github.com/dpolimeni/Multi-scale-pointcloud-registration/issues"

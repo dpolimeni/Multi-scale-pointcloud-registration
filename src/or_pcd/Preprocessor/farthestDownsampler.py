@@ -2,9 +2,9 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
-from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
-from pointclouds.utils.constants import __SAMPLE_SIZE__
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.utils.constants import __SAMPLE_SIZE__
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class FarthestDownsampler(IProcessBlock):

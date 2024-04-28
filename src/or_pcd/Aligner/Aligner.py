@@ -7,13 +7,13 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from pointclouds.Optimizer.iOptimizer import IOptimizer
-from pointclouds.Preprocessor.preprocessor import Preprocessor
-from pointclouds.Visualizer.Visualizer import (
+from or_pcd.Optimizer.iOptimizer import IOptimizer
+from or_pcd.Preprocessor.preprocessor import Preprocessor
+from or_pcd.Visualizer.Visualizer import (
     visualize_point_clouds,
     draw_registration_result,
 )
-from pointclouds.utils.constants import (
+from or_pcd.utils.constants import (
     __ALIGNER_DEG__,
     __ALIGNER_MU__,
     __ALIGNER_STD__,
@@ -24,8 +24,8 @@ from pointclouds.utils.constants import (
     __REFINER_MAX_ITER__,
     __REFINER_DISTANCE_THRESHOLD__,
 )
-from pointclouds.utils.create_cloud import create_cloud
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.utils.create_cloud import create_cloud
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class Aligner:

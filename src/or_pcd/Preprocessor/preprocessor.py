@@ -1,9 +1,9 @@
 from typing import List
 
 import numpy as np
-from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
-from pointclouds.Preprocessor.scaler import Scaler
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.Preprocessor.scaler import Scaler
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class Preprocessor:

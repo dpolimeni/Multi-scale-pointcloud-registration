@@ -5,21 +5,21 @@ import numpy as np
 import open3d as o3d
 import yaml
 
-from pointclouds.Aligner.Aligner import Aligner
-from pointclouds.Optimizer.generalizedICP import GeneralizedICP
-from pointclouds.Preprocessor.farthestDownsampler import FarthestDownsampler
-from pointclouds.Preprocessor.outliers.sor import SOR
-from pointclouds.Preprocessor.preprocessor import Preprocessor
-from pointclouds.Preprocessor.randomDownsampler import RandomDownsampler
-from pointclouds.Preprocessor.scaler import Scaler
-from pointclouds.Preprocessor.voxelDownsampler import VoxelDownsampler
-from pointclouds.Visualizer.Visualizer import (
+from or_pcd.Aligner.Aligner import Aligner
+from or_pcd.Optimizer.generalizedICP import GeneralizedICP
+from or_pcd.Preprocessor.farthestDownsampler import FarthestDownsampler
+from or_pcd.Preprocessor.outliers.sor import SOR
+from or_pcd.Preprocessor.preprocessor import Preprocessor
+from or_pcd.Preprocessor.randomDownsampler import RandomDownsampler
+from or_pcd.Preprocessor.scaler import Scaler
+from or_pcd.Preprocessor.voxelDownsampler import VoxelDownsampler
+from or_pcd.Visualizer.Visualizer import (
     visualize_point_clouds,
     draw_registration_result,
     np_draw_registration_result,
 )
-from pointclouds.utils.create_cloud import create_cloud
-from pointclouds.utils.constants import (
+from or_pcd.utils.create_cloud import create_cloud
+from or_pcd.utils.constants import (
     __NB_NEIGHBOURS__,
     __STD_RATIO__,
     __FARTHEST_SAMPLE_SIZE__,

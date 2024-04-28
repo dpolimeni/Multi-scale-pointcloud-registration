@@ -3,12 +3,12 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from pointclouds.Optimizer.iOptimizer import IOptimizer
-from pointclouds.utils.constants import (
+from or_pcd.Optimizer.iOptimizer import IOptimizer
+from or_pcd.utils.constants import (
     __MAX_CORRESPONDENCE_DISTANCE__,
     __MAX_ITERATIONS__,
 )
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class GeneralizedICP(IOptimizer):

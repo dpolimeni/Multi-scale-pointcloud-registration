@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 
-from pointclouds.Preprocessor.iProcessBlock import IProcessBlock
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class Scaler(IProcessBlock):

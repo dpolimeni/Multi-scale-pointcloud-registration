@@ -4,8 +4,8 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from pointclouds.Optimizer.iOptimizer import IOptimizer
-from pointclouds.utils.constants import (
+from or_pcd.Optimizer.iOptimizer import IOptimizer
+from or_pcd.utils.constants import (
     __DIVISION_FACTOR__,
     __TUPLE_SCALE__,
     __MAXIMUM_CORRESPONDENCE_DISTANCE__,
@@ -16,7 +16,7 @@ from pointclouds.utils.constants import (
     __NORMAL_ESTIMATE_RADIUS__,
     __NORMAL_ESTIMATE_KNN__,
 )
-from pointclouds.utils.logger_factory import LoggerFactory
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class FastGlobalOptimizer(IOptimizer):

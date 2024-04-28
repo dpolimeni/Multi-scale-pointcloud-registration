@@ -4,7 +4,7 @@ Created on Wed Jun 22 17:03:54 2022
 
 @author: Alessandro & Diego
 """
-from pointclouds.utils.util_mcs_registration import *
+from or_pcd.utils.util_mcs_registration import *
 import time
 
 "IMPORT LIBRARIES"
