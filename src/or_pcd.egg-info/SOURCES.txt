@@ -1,6 +1,6 @@
 LICENSE
 README.md
-pyproject.toml
+setup.py
 src/or_pcd/__init__.py
 src/or_pcd/test.py
 src/or_pcd.egg-info/PKG-INFO
@@ -21,13 +21,9 @@ src/or_pcd/Preprocessor/preprocessor.py
 src/or_pcd/Preprocessor/randomDownsampler.py
 src/or_pcd/Preprocessor/scaler.py
 src/or_pcd/Preprocessor/voxelDownsampler.py
-src/or_pcd/Preprocessor/outliers/sor.py
 src/or_pcd/Visualizer/Visualizer.py
 src/or_pcd/Visualizer/__init__.py
-src/or_pcd/alignment/__init__.py
-src/or_pcd/alignment/mcs_registration.py
 src/or_pcd/utils/__init__.py
 src/or_pcd/utils/constants.py
 src/or_pcd/utils/create_cloud.py
 src/or_pcd/utils/logger_factory.py
-src/or_pcd/utils/util_mcs_registration.py
