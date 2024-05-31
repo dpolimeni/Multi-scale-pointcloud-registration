@@ -5,7 +5,7 @@ from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
 from or_pcd.utils.logger_factory import LoggerFactory
 
 
-class Scaler(IProcessBlock):
+class RadiusScaler(IProcessBlock):
     """
     Scales point cloud by centering it by its mean and dividing by the radius of the cloud
     """

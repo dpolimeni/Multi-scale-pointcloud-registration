@@ -5,15 +5,15 @@ with open("README.md", 'r') as f:
 
 setup(
     name = "or-pcd",
-    version = "0.0.1-BETA.1",
+    version = "0.0.1-BETA.3",
     description = "A python package to perform pointcloud registration with scale differences using a two-block optimization approach",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dpolimeni/Multi-scale-pointcloud-registration",
-    author="Diego Polimeni",
-    author_email="diego.polimeni@gmail.com",
+    author="Diego Polimeni and Alessandro Pannone",
+    author_email="diego.polimeni@gmail.com a.pannone1798@gmail.com",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
@@ -25,6 +25,7 @@ setup(
         "scikit-learn==1.4.1.post1",
         "open3d==0.18.0"
     ],
+    package_data={"": ["data/*.conf", "data/*.ply"]},
     extras_require={
         "dev": ["pytest>=7.0", "twine>=4.0.2"],
     },

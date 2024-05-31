@@ -191,6 +191,3 @@ class FastGlobalOptimizer(IOptimizer):
             fpfh_radius={self._fpfh_radius},
             fpfh_knn={self._fpfh_knn})"
         """
-
-
-a = FastGlobalOptimizer()
