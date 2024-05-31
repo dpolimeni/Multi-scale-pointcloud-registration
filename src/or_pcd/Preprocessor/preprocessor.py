@@ -14,11 +14,11 @@ class Preprocessor:
 
         self._LOG = LoggerFactory.get_logger(self.__class__.__name__, log_on_file=False)
         # Check if the Scalers class is among the preprocessor blocks
-        if not any(isinstance(block, Scaler) for block in preprocessor_blocks):
+        if not any(isinstance(block, RadiusScaler) for block in preprocessor_blocks):
             self._LOG.warning(
                 """Scalers block is not present in the preprocessor blocks --> Adding Scalers block to the preprocessor blocks"""
             )
-            preprocessor_blocks.insert(-1, Scaler())
+            preprocessor_blocks.insert(-1, RadiusScaler())
         self.preprocessor_blocks = preprocessor_blocks
 
     def preprocess(self, cloud: np.ndarray) -> np.ndarray:
