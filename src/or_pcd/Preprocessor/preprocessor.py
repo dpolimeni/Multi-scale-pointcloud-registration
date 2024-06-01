@@ -18,7 +18,7 @@ class Preprocessor:
             self._LOG.warning(
                 """Scalers block is not present in the preprocessor blocks --> Adding Scalers block to the preprocessor blocks"""
             )
-            preprocessor_blocks.insert(-1, RadiusScaler())
+            preprocessor_blocks.insert(0, RadiusScaler())
         self.preprocessor_blocks = preprocessor_blocks
 
     def preprocess(self, cloud: np.ndarray) -> np.ndarray:
