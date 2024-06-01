@@ -5,7 +5,7 @@ import open3d as o3d
 
 from or_pcd.Optimizer.iOptimizer import IOptimizer
 from or_pcd.utils.constants import (
-    __MAX_CORRESPONDENCE_DISTANCE__,
+    __MAXIMUM_CORRESPONDENCE_DISTANCE__,
     __MAX_ITERATIONS__,
 )
 from or_pcd.utils.logger_factory import LoggerFactory
@@ -14,7 +14,7 @@ from or_pcd.utils.logger_factory import LoggerFactory
 class GeneralizedICP(IOptimizer):
     def __init__(
         self,
-        max_correspondence_distance: float = __MAX_CORRESPONDENCE_DISTANCE__,
+        max_correspondence_distance: float = __MAXIMUM_CORRESPONDENCE_DISTANCE__,
         max_iterations: int = __MAX_ITERATIONS__,
     ):
         """
@@ -29,7 +29,7 @@ class GeneralizedICP(IOptimizer):
         if max_correspondence_distance <= 0:
             msg = f"max correspondence distance cannot be 0 or less. Provided: {max_correspondence_distance}"
             self._LOG.warning(msg)
-            self._max_correspondence_distance = __MAX_CORRESPONDENCE_DISTANCE__
+            self._max_correspondence_distance = __MAXIMUM_CORRESPONDENCE_DISTANCE__
         else:
             self._max_correspondence_distance = max_correspondence_distance
 
