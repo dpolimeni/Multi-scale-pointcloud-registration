@@ -13,8 +13,34 @@ These are the components:
 - 🔝 Optimizer: Inner block optimization methods. At the moment FastGlobal/GeneralizedICP are available
 - ⁑ The Aligner: is the outer block of the optimization. At the moment not extendible as it performs a pattern search with a multi-start procedure in order to find best scale parameters.
 
-## Sample Data
-We provide some sample data in our libary importable.
+We provide some sample data to test and extend this library. You can find all of them within the data folder of the library.
+
+## Example code for beginners
+
+### First import main components
+```
+from or_pcd.Preprocessor.Downsamplers import RandomDownsampler
+from or_pcd.Aligner import Aligner
+from or_pcd.Optimizer import GeneralizedICP, FastGlobalOptimizer
+from or_pcd.Preprocessor.Outliers import SOR
+from or_pcd.Preprocessor.preprocessor import Preprocessor
+from or_pcd.data import load_sample_cloud
+```
+### Then load some sample clouds
+```
+source_cloud = load_sample_cloud("ArmadilloBack_330")
+target_cloud = load_sample_cloud("ArmadilloBack_0")
+```
+
+### Initialize optimizers with default parameters and run alignment
+```
+optimizer = FastGlobalOptimizer()
+preprocessor = Preprocessor([RandomDownsampler(5000), SOR()])
+aligner = Aligner(preprocessor, preprocessor, optimizer, visualize_intermediate_steps=True)
+aligner.align(source_cloud, target_cloud)
+```
+
+
 
 # Equally involved contributors:
 
