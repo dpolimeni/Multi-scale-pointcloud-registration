@@ -228,6 +228,14 @@ class Aligner:
         refine_registration: bool = True,
         icp_type: str = "PointToPlane",
     ) -> Tuple[np.ndarray, float, np.ndarray, List[float]]:
+        """Align the source and target point clouds. using a two block optimization approach.
+        :param source: Source point cloud
+        :param target: Target point cloud
+        :param refine_registration: Flag to enable/disable the refinement step that uses ICP
+        :param icp_type: PointToPoint or PointToPlane ICP
+
+        :return: (optimal_transformation, optimal_metric, optimal_scale_factors, errors): (Optimal transformation matrix, RMSE of the inliers, optimal scaling factor, list of errors)
+        """
         source = self._source_preprocessor.preprocess(source)
         target = self._target_preprocessor.preprocess(target)
         iteration = 0
@@ -295,7 +303,7 @@ class Aligner:
         if refine_registration:
             target = target * optimal_scale_factors
             optimal_transformation, optimal_metric = self.refine_registration(
-                source=source, target=target, initial_transform=optimal_transformation
+                source=source, target=target, initial_transform=optimal_transformation, icp_type=icp_type
             )
             errors.append(optimal_metric)
 
@@ -310,6 +318,16 @@ class Aligner:
         distance_threshold: float = __REFINER_DISTANCE_THRESHOLD__,
         icp_type: str = "PointToPoint",
     ) -> (np.ndarray, float):
+        """Refine the registration using ICP algorithm.
+        :param source: Source point cloud
+        :param target: Target point cloud
+        :param initial_transform: Initial transformation matrix
+        :param max_iteration: Maximum number of iterations for the ICP algorithm
+        :param distance_threshold: Maximum distance between two correspondences
+        :param icp_type: PointToPoint or PointToPlane ICP
+
+        :return: (T_refined, result.inlier_rmse): (Refined transformation matrix, RMSE of the inliers)
+        """
         if icp_type == "PointToPoint":
             icp_type = (
                 o3d.pipelines.registration.TransformationEstimationPointToPoint()

@@ -2,7 +2,9 @@ from typing import List
 
 import numpy as np
 from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.Preprocessor.Scalers.BaseScaler import BaseScaler
 from or_pcd.Preprocessor.Scalers import RadiusScaler
+
 from or_pcd.utils.logger_factory import LoggerFactory
 
 
@@ -14,7 +16,7 @@ class Preprocessor:
 
         self._LOG = LoggerFactory.get_logger(self.__class__.__name__, log_on_file=False)
         # Check if the Scalers class is among the preprocessor blocks
-        if not any(isinstance(block, RadiusScaler) for block in preprocessor_blocks):
+        if not any(issubclass(block, BaseScaler) for block in preprocessor_blocks):
             self._LOG.warning(
                 """Scalers block is not present in the preprocessor blocks --> Adding Scalers block to the preprocessor blocks"""
             )
