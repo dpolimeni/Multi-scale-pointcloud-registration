@@ -9,6 +9,7 @@ import open3d as o3d
 
 from or_pcd.Optimizer.iOptimizer import IOptimizer
 from or_pcd.Preprocessor.preprocessor import Preprocessor
+from or_pcd.Preprocessor.Scalers.BaseScaler import BaseScaler
 from or_pcd.Visualizer.Visualizer import (
     visualize_point_clouds,
     draw_registration_result,
@@ -29,6 +30,9 @@ from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class Aligner:
+    transfromation: np.ndarray = np.eye(4)
+    scale_factors: np.ndarray = np.ones((1, 3))
+
     def __init__(
         self,
         source_preprocessor: Preprocessor,
@@ -307,6 +311,9 @@ class Aligner:
             )
             errors.append(optimal_metric)
 
+        self.transfromation = optimal_transformation
+        self.scale_factors = optimal_scale_factors
+
         return optimal_transformation, optimal_metric, optimal_scale_factors, errors
 
     def refine_registration(
@@ -355,6 +362,30 @@ class Aligner:
         T_refined = result.transformation
 
         return T_refined, result.inlier_rmse
+
+
+    def transfrom(self, source: np.ndarray) -> np.ndarray:
+        """Transform the source point cloud using the transformation matrix.
+        :param source: Source point cloud
+        :return: transformed_source: Transformed source point cloud to be aligned with the target
+        """
+        # Get the mean and distance of the source and target point clouds preprocessor
+        for process_block in self._source_preprocessor.process_blocks:
+            if issubclass(process_block, BaseScaler):
+                source_mean = process_block.mean
+                source_distance = process_block.distance
+        for process_block in self._target_preprocessor.process_blocks:
+            if issubclass(process_block, BaseScaler):
+                target_mean = process_block.mean
+                target_distance = process_block.distance
+
+        translation = target_mean + self.transfromation[:3, 3]*target_distance - np.dot(
+            source_mean,
+            self.transfromation[:3,:3]
+        )*target_distance/source_distance
+
+        rotation = self.transfromation[:3, :3] * target_distance/source_distance
+        return np.dot(source, rotation) + translation
 
     def __repr__(self):
         return f"""{self.__class__.__name__}
