@@ -2,9 +2,9 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
-from src.Preprocessor.iProcessBlock import IProcessBlock
-from src.utils.constants import __SAMPLE_SIZE__
-from src.utils.logger_factory import LoggerFactory
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.utils.constants import __SAMPLE_SIZE__
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class FarthestDownsampler(IProcessBlock):
@@ -12,7 +12,9 @@ class FarthestDownsampler(IProcessBlock):
         """
         :param sample_size: size of the down-sampled cloud
         """
-        self._LOG = LoggerFactory.get_logger(log_name=self.__class__.__name__, log_on_file=False)
+        self._LOG = LoggerFactory.get_logger(
+            log_name=self.__class__.__name__, log_on_file=False
+        )
 
         if sample_size <= 0:
             msg = f"sample size cannot be 0 or less. Provided: {sample_size}. Using default value: {__SAMPLE_SIZE__}"

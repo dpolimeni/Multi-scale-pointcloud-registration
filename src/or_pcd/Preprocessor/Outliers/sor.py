@@ -1,10 +1,10 @@
 import numpy as np
 from numpy import ndarray
-from src.Preprocessor.iProcessBlock import IProcessBlock
-from src.utils.logger_factory import LoggerFactory
+from or_pcd.Preprocessor.iProcessBlock import IProcessBlock
+from or_pcd.utils.logger_factory import LoggerFactory
 import open3d as o3d
 
-from src.utils.constants import (
+from or_pcd.utils.constants import (
     __NB_NEIGHBOURS__,
     __STD_RATIO__,
 )
@@ -14,7 +14,7 @@ class SOR(IProcessBlock):
     """
     Statistical outlier removal.
 
-    This class implements the statistical outlier removal (SOR) algorithm, which is used to filter outliers from point cloud data.
+    This class implements the statistical outlier removal (SOR) algorithm, which is used to filter Outliers from point cloud data.
 
     Args:
         nb_neighbours (int): Number of neighbours used by the SOR algorithm to compute mean and variance.
@@ -50,7 +50,7 @@ class SOR(IProcessBlock):
 
     def process(self, cloud: ndarray) -> ndarray:
         """
-        Filters outliers from the input point cloud using the SOR algorithm and returns only the inliers.
+        Filters Outliers from the input point cloud using the SOR algorithm and returns only the inliers.
         Since the implementation provided by open3d is used, a temporary pointcluoud is created with
         the provided array
 
@@ -65,7 +65,7 @@ class SOR(IProcessBlock):
         _temp = o3d.geometry.PointCloud()
         _temp.points = o3d.utility.Vector3dVector(np.copy(a=cloud))
 
-        # Remove outliers
+        # Remove Outliers
         inliers, ind = _temp.remove_statistical_outlier(
             nb_neighbors=self._nb_neighbours, std_ratio=self._std_ratio
         )

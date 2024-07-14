@@ -4,8 +4,8 @@ from typing import Tuple
 import numpy as np
 import open3d as o3d
 
-from src.Optimizer.iOptimizer import IOptimizer
-from src.utils.constants import (
+from or_pcd.Optimizer.iOptimizer import IOptimizer
+from or_pcd.utils.constants import (
     __DIVISION_FACTOR__,
     __TUPLE_SCALE__,
     __MAXIMUM_CORRESPONDENCE_DISTANCE__,
@@ -16,7 +16,7 @@ from src.utils.constants import (
     __NORMAL_ESTIMATE_RADIUS__,
     __NORMAL_ESTIMATE_KNN__,
 )
-from src.utils.logger_factory import LoggerFactory
+from or_pcd.utils.logger_factory import LoggerFactory
 
 
 class FastGlobalOptimizer(IOptimizer):
@@ -180,7 +180,7 @@ class FastGlobalOptimizer(IOptimizer):
         # If the rmse is 0 raise an error as parameters are not correct
         if optimization_result.inlier_rmse == 0:
             msg = """Optimization failed with loss = 0. Parameters are not well set. 
-Probably due to maximum_correspondence_distance set too low."""
+        Probably due to maximum_correspondence_distance set too low."""
             self._LOG.error(msg)
             raise ValueError(msg)
 
@@ -198,6 +198,3 @@ Probably due to maximum_correspondence_distance set too low."""
             fpfh_radius={self._fpfh_radius},
             fpfh_knn={self._fpfh_knn})"
         """
-
-
-a = FastGlobalOptimizer()
