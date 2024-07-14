@@ -1,0 +1,7 @@
+numpy==1.26.4
+scikit-learn==1.4.1.post1
+open3d==0.18.0
+
+[dev]
+pytest>=7.0
+twine>=4.0.2
