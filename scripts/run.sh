@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export PYTHONPATH=$(pwd):$PYTHONPATH
+export PYTHONPATH=$(pwd)/src:$PYTHONPATH
 python3 main.py

@@ -1,3 +1,24 @@
+Metadata-Version: 2.1
+Name: or-pcd
+Version: 0.0.1b3
+Summary: A python package to perform pointcloud registration with scale differences using a two-block optimization approach
+Home-page: https://github.com/dpolimeni/Multi-scale-pointcloud-registration
+Author: Diego Polimeni and Alessandro Pannone
+Author-email: diego.polimeni@gmail.com a.pannone1798@gmail.com
+License: MIT
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy==1.26.4
+Requires-Dist: scikit-learn==1.4.1.post1
+Requires-Dist: open3d==0.18.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: twine>=4.0.2; extra == "dev"
+
 # Registration Library OR-PCD 🚀
 ☁ OR-PCD is a library that implements a two block optimization approach in order to align Pointclouds. This method was created as a solution capable to manage scale and differences among the three coordinate axes of the clouds. In our approach we optimize the scale differences considering all the x/y/z coordinates directions as variables.
 
@@ -13,34 +34,8 @@ These are the components:
 - 🔝 Optimizer: Inner block optimization methods. At the moment FastGlobal/GeneralizedICP are available
 - ⁑ The Aligner: is the outer block of the optimization. At the moment not extendible as it performs a pattern search with a multi-start procedure in order to find best scale parameters.
 
-We provide some sample data to test and extend this library. You can find all of them within the data folder of the library.
-
-## Example code for beginners
-
-### First import main components
-```
-from or_pcd.Preprocessor.Downsamplers import RandomDownsampler
-from or_pcd.Aligner import Aligner
-from or_pcd.Optimizer import GeneralizedICP, FastGlobalOptimizer
-from or_pcd.Preprocessor.Outliers import SOR
-from or_pcd.Preprocessor.preprocessor import Preprocessor
-from or_pcd.data import load_sample_cloud
-```
-### Then load some sample clouds
-```
-source_cloud = load_sample_cloud("ArmadilloBack_330")
-target_cloud = load_sample_cloud("ArmadilloBack_0")
-```
-
-### Initialize optimizers with default parameters and run alignment
-```
-optimizer = FastGlobalOptimizer()
-preprocessor = Preprocessor([RandomDownsampler(5000), SOR()])
-aligner = Aligner(preprocessor, preprocessor, optimizer, visualize_intermediate_steps=True)
-aligner.align(source_cloud, target_cloud)
-```
-
-
+## Sample Data
+We provide some sample data in our libary importable.
 
 # Equally involved contributors:
 
