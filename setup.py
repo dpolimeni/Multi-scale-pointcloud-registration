@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
     name = "or-pcd",
-    version = "0.0.1-BETA.4",
+    version = "0.0.1-BETA.5",
     description = "A python package to perform pointcloud registration with scale differences using a two-block optimization approach",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/dpolimeni/Multi-scale-pointcloud-registration",
     author="Diego Polimeni and Alessandro Pannone",
-    author_email="diego.polimeni@gmail.com a.pannone1798@gmail.com",
+    author_email="a.pannone1798@gmail.com",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
