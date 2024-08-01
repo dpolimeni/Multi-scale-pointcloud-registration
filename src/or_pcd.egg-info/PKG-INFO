@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: or-pcd
-Version: 0.0.1b6
+Version: 0.0.1b7
 Summary: A python package to perform pointcloud registration with scale differences using a two-block optimization approach
 Home-page: https://github.com/dpolimeni/Multi-scale-pointcloud-registration
 Author: Diego Polimeni and Alessandro Pannone
