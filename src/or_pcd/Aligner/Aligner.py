@@ -303,6 +303,7 @@ class Aligner:
                 source=source, target=target, initial_transform=optimal_transformation, icp_type=icp_type
             )
             errors.append(optimal_metric)
+            self._LOG.info(f"Refined RMSE: {optimal_metric}")
 
         if self._visualize_intermediate_steps:
             draw_registration_result(
