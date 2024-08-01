@@ -178,11 +178,14 @@ class FastGlobalOptimizer(IOptimizer):
         roto_translation[:3, :3] = transposed_rotation
 
         # If the rmse is 0 raise an error as parameters are not correct
-        if optimization_result.inlier_rmse == 0:
-            msg = """Optimization failed with loss = 0. Parameters are not well set. 
-        Probably due to maximum_correspondence_distance set too low."""
+        if len(optimization_result.correspondence_set) == 0:
+            msg = """No correspondences detected from the optimizer. Parameters are not well set. 
+        Probably due to: 
+        -   maximum_correspondence_distance set too low
+        -   tuple_scale set too high
+        """
             self._LOG.error(msg)
-            raise ValueError(msg)
+            raise Warning(msg)
 
         return roto_translation, optimization_result.inlier_rmse
 
