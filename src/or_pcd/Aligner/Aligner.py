@@ -297,19 +297,19 @@ class Aligner:
                 self._delta = self._delta / 2
                 self._LOG.info(f"No improvement, decreasing step size to {self._delta}")
 
-        if self._visualize_intermediate_steps:
-            draw_registration_result(
-                create_cloud(source),
-                create_cloud(target * optimal_scale_factors),
-                optimal_transformation,
-            )
-
         if refine_registration:
             target = target * optimal_scale_factors
             optimal_transformation, optimal_metric = self.refine_registration(
                 source=source, target=target, initial_transform=optimal_transformation, icp_type=icp_type
             )
             errors.append(optimal_metric)
+
+        if self._visualize_intermediate_steps:
+            draw_registration_result(
+                create_cloud(source),
+                create_cloud(target * optimal_scale_factors),
+                optimal_transformation,
+            )
 
         self.transfromation = optimal_transformation
         self.scale_factors = optimal_scale_factors
@@ -370,22 +370,28 @@ class Aligner:
         :return: transformed_source: Transformed source point cloud to be aligned with the target
         """
         # Get the mean and distance of the source and target point clouds preprocessor
-        for process_block in self._source_preprocessor.process_blocks:
-            if issubclass(process_block, BaseScaler):
+        for process_block in self._source_preprocessor.preprocessor_blocks:
+            if issubclass(process_block.__class__, BaseScaler):
                 source_mean = process_block.mean
-                source_distance = process_block.distance
-        for process_block in self._target_preprocessor.process_blocks:
-            if issubclass(process_block, BaseScaler):
+                source_distance = process_block.scale
+        for process_block in self._target_preprocessor.preprocessor_blocks:
+            if issubclass(process_block.__class__, BaseScaler):
                 target_mean = process_block.mean
-                target_distance = process_block.distance
+                target_distance = process_block.scale
 
-        translation = target_mean + self.transfromation[:3, 3]*target_distance - np.dot(
-            source_mean,
-            self.transfromation[:3,:3]
-        )*target_distance/source_distance
+        # Normalize the source point cloud
+        source = (source - source_mean) / source_distance
 
-        rotation = self.transfromation[:3, :3] * target_distance/source_distance
-        return np.dot(source, rotation) + translation
+        # Rototranslate the source cloud as done in the align method
+        source = np.dot(source, self.transfromation[:3, :3]) + self.transfromation[:3, 3]
+
+        # Apply the inverse scale factors
+        source = source / self.scale_factors
+
+        # Denormalize the source point cloud with the target point cloud
+        source = source * target_distance + target_mean
+
+        return source
 
     def __repr__(self):
         return f"""{self.__class__.__name__}
