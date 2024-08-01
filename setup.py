@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
     name = "or-pcd",
-    version = "0.0.1-BETA.3",
+    version = "0.0.1-BETA.4",
     description = "A python package to perform pointcloud registration with scale differences using a two-block optimization approach",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
