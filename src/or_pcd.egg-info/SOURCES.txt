@@ -23,6 +23,7 @@ src/or_pcd/Preprocessor/Downsamplers/randomDownsampler.py
 src/or_pcd/Preprocessor/Downsamplers/voxelDownsampler.py
 src/or_pcd/Preprocessor/Outliers/__init__.py
 src/or_pcd/Preprocessor/Outliers/sor.py
+src/or_pcd/Preprocessor/Scalers/BaseScaler.py
 src/or_pcd/Preprocessor/Scalers/__init__.py
 src/or_pcd/Preprocessor/Scalers/radiusScaler.py
 src/or_pcd/Visualizer/Visualizer.py
